@@ -1,0 +1,8 @@
+* Touch appears to produce data on /dev/input/event8
+  That's on the rpi4 with pi foundation touchscreen
+  But only if you don't plug in a usb input device
+* The touch pad on my laptop doesn't seem to produce
+  any touch events, but I may need to recheck that.
+* Use lsinput from input-utils to identify the 
+  files in /dev/input/*
+
