@@ -75,18 +75,23 @@ namespace eval ::presets {
 	zither-munich { strings 42 root A4 tuning {0 0 -7 -7 -7 15 -5 7 -5 -5 7 -5 7 -5 -5 7 -5 -5 -5 7 -5 -5 7 -5 7 -5 -5 7 -5 -3 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1}}
 	zither-viennese { strings 38 root A4 tuning {0 -7 5 -12 -7 20 -5 -5 7 -5 7 -5 -5 7 -5 7 -5 -5 -17 7 -5 7 -5 -5 7 -5 7 -5 -5 7 -8 -1 -1 -1 -1 -1 -1 -1}}
 
-	stick-mr { strings 10 root E3 tuning {0 -7 -7 -7 -7 16 5 5 5 5}}
-	stick-cl { strings 10 root E3 tuning {0 -7 -7 -7 -7 18 5 5 5 5}}
-	stick-b { strings 10 root E3 tuning {0 -7 -7 -7 -7 13 5 5 5 5}}
-	stick-db { strings 10 root E3 tuning {0 -7 -7 -7 -7 11 5 5 5 5}}
-	stick-dmr { strings 10 root D3 tuning {0 -7 -7 -7 -7 16 5 5 5 5}}
-	stick-rmr { strings 10 root F#3 tuning {0 -7 -7 -7 -7 4 17 5 5 5}}
-	stick-fb { strings 10 root F#3 tuning {0 -7 -7 -7 -7 11 5 5 5 5}}
-	stick-dbr { strings 10 root D#3 tuning {0 -7 -7 -7 -7 17 5 5 5 5}}
+	stick-8-1 { strings 8 root B0 tuning {0 5 5 5 5 5 5 5}}
+	stick-8-2 { strings 8 root B0 tuning {0 5 5 5 5 5 4 5}}
+	stick-8-3 { strings 8 root B0 tuning {0 5 5 5 5 4 5 5}}
+	stick-8-4 { strings 8 root A2 tuning {0 -7 -7 -7 16 5 5 5}}
+	stick-8-5 { strings 8 root A2 tuning {0 -7 -7 -7 18 5 5 5}}
+
+	stick-10-1 { strings 10 root E3 tuning {0 -7 -7 -7 -7 16 5 5 5 5}}
+	stick-10-2 { strings 10 root E3 tuning {0 -7 -7 -7 -7 18 5 5 5 5}}
+	stick-10-3 { strings 10 root E3 tuning {0 -7 -7 -7 -7 13 5 5 5 5}}
+	stick-10-4 { strings 10 root E3 tuning {0 -7 -7 -7 -7 11 5 5 5 5}}
+	stick-10-5 { strings 10 root D3 tuning {0 -7 -7 -7 -7 16 5 5 5 5}}
+	stick-10-6 { strings 10 root F#3 tuning {0 -7 -7 -7 -7 4 17 5 5 5}}
+	stick-10-7 { strings 10 root F#3 tuning {0 -7 -7 -7 -7 11 5 5 5 5}}
+	stick-10-8 { strings 10 root D#3 tuning {0 -7 -7 -7 -7 17 5 5 5 5}}
     }]
 
     set simple {
-	stick-mr
 	dulcimer-3
 	dulcimer-4
 	bass-guitar-4
@@ -99,8 +104,10 @@ namespace eval ::presets {
 	sawmill-5
 	guitar-6
 	guitar-7
-	guitar-12
 	mandolin-8
+	stick-8-1
+	stick-10-1
+	guitar-12
     }
 }
 

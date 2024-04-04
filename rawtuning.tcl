@@ -202,22 +202,39 @@ namespace eval ::rawtuning {
 	    }
 	}
 
-	10 {
+	8 {
 	    stick {
-		mr {E3 A2 D2 G1 C1 E2 A2 D3 G3 C4}
-		cl {E3 A2 D2 G1 C1 F#2 B2 E3 A3 D4}
-		b  {E3 A2 D2 G1 C1 C#2 F#2 B2 E3 A3}
-		db {E3 A2 D2 G1 C1 B1 E2 A2 D3 G3}
-		dmr {D3 G2 C2 F1 Bb0 D2 G2 C3 F3 Bb3}
-		rmr {F#3 B2 E2 A1 D1 F#2 B2 E3 A3 D4}
-		fb {F#3 B2 E2 A1 D1 C#2 F#2 B2 E3 A3}
-		dbr {D#3 G#2 C#2 F#1 B0 E2 A2 D3 G3 C4}
+		1 {B0 E1 A1 D2 G2 C3 F3 Bb3}
+		2 {B0 E1 A1 D2 G2 C3 E3 A3}
+		3 {B0 E1 A1 D2 G2 B2 E3 A3}
+		4 {A2 D2 G1 C1 E2 A2 D3 G3}
+		5 {A2 D2 G1 C1 F#2 B2 E3 A3}
+	    }
+	}
+	
+	10 {
+	    guitar {
+		concat {E1 A1 D2 G2 E2 A2 D3 G3 B3 E4}
+	    }
+	    stick {
+		1 {E3 A2 D2 G1 C1 E2 A2 D3 G3 C4}
+		2 {E3 A2 D2 G1 C1 F#2 B2 E3 A3 D4}
+		3 {E3 A2 D2 G1 C1 C#2 F#2 B2 E3 A3}
+		4 {E3 A2 D2 G1 C1 B1 E2 A2 D3 G3}
+		5 {D3 G2 C2 F1 Bb0 D2 G2 C3 F3 Bb3}
+		6 {F#3 B2 E2 A1 D1 F#2 B2 E3 A3 D4}
+		7 {F#3 B2 E2 A1 D1 C#2 F#2 B2 E3 A3}
+		8 {D#3 G#2 C#2 F#1 B0 E2 A2 D3 G3 C4}
 	    }
 	}
 	
 	12 {
 	    guitar {
 		standard {E1 E2 A1 A2 D2 D3 G2 G3 B3 B3 E4 E4}
+	    }
+	    stick {
+		1 {B3 E3 A2 D2 G1 C1 B1 E2 A2 D3 G3 C4}
+		1 {B3 E3 A2 D2 G1 C1 C#2 F#2 B2 E3 A3 D3}
 	    }
 	}
 

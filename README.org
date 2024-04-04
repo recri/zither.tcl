@@ -37,11 +37,40 @@
 *** That would be a very nice way to mount a phone, or two phones, or
    a narrow touch screen, on an actual stick to place the tapping screen
    at nipple height where both hands can reach comfortably.
-*** SPECIFICATIONS for 12-String Stick Guitar®, all tunings:
+* There is a 8.8 inch touchscreen, 1360x480 pixels, hdmi + usb
+  for $75 at amazon, suddenly makes a lot of sense.
+  Don't believe that screen is really 10 point touch, as all the
+  look alike screens specify 5 point touch.
+* Found an 8 inch 10 point touch screen on AliExpress for $30.
+  A little thin on the description  (resolution? interface?)
+  but it will probably do, and $30 isn't much to venture.
+* This 8 inch screen is approximately an iPad Mini size and I think
+  that will be a favored size, but we'll see.  The plan is to make
+  a board mount for it, and for this RPi 7.7 inch display, too.
+** Stick specifications
+*** SPECIFICATIONS for 12-string Stick Guitar®, all tunings:
 **** Dimensions 37 1/4" (94.6cm) x 3 3/4" (9.5cm) x 1 3/4" (4.5cm)
 **** Neck thickness 7/8" (2.2cm), scale length 26 1/2" (67.3cm)
 **** String spacing .300" (7.62mm), Group spacing .380" (9.14mm)
 **** Average weight 7.6 lbs (2.72kg)
-    (weight depends on material and pickups)
-* There is a 8.8 inch touchscreen, 1360x480 pixels, hdmi + usb
-  for $75 at amazon, suddenly makes a lot of sense.
+*** SPECIFICATIONS for 10-string Stick, all tunings
+**** Dimensions 45 1/4" (115cm) x 3 1/4" (8.3cm) x 1 3/4" (4.5cm)
+**** Neck thickness 7/8" (2.2cm), scale length 36" (91.5cm)
+**** String spacing .320" (8.13mm), Group spacing .430" (10.92mm)
+**** Average weight Average weight 7.0 lbs (3.17kg)
+*** SPECIFICATIONS for 10-string Railboard®, all tunings:
+**** Dimensions 45 3/8" (115.25cm) x 3 1/2" (8.9cm)
+**** Neck thickness 3/4" (1.9cm), scale length 34" (86.3cm)
+**** String spacing .340" (8.64mm), Group spacing .470" (11.94mm)
+**** Weight 8.5 lbs (3.86kg)
+*** SPECIFICATIONS for 12-string Grand Railboard®, all tunings:
+**** Dimensions 45 3/4" (116.20cm) x 3 3/4" (9.5cm)
+**** Neck thickness 3/4" (1.9cm), scale length 34" (86.3cm)
+**** String spacing .305" (7.62mm), Group spacing .400" (9.14mm)
+**** Weight 9.3 lbs (4.22kg)
+*** SPECIFICATIONS for 10-string Alto Railboard®, all tunings:
+**** Dimensions 36 3/8" (92.4cm) x 3 1/2" (8.9cm)
+**** Neck thickness 3/4" (1.9cm), scale length 25 1/2" (64.8cm)
+**** String spacing .340" (8.64mm), Group spacing .470" (11.94mm)
+**** Weight 7 lbs (3.17kg)
+

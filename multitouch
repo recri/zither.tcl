@@ -19,11 +19,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 # 
 
-lappend auto_path .
+lappend auto_path . ../keyer/lib
 
 package require ::params
 package require ::evdev
 package require ::window
+package require ::sound
 
 array set data {
     t 0
@@ -89,6 +90,3 @@ wm attributes . -fullscreen $::params::fullscreen
 
 ::window::main {}
 .c configure -width $::params::width -height $::params::height -bg black -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0
-bind .c <<TouchBegin>> { puts "<<TouchBegin>> %d %x %y" }
-bind .c <<TouchUpdate>> { puts "<<TouchUpdate>> %d %x %y" }
-bind .c <<TouchEnd>> { puts "<<TouchEnd>> %d %x %y" }

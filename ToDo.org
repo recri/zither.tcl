@@ -2,3 +2,4 @@
 * zither needs to group the strings into fretted, accompaniment, bass, and contrabass
 * lyre is not fretted, nor are other harps
 * autoharp is not fretted, but it has muting
+* allow a key to be specified for note-to-name to switch between # and b enharmonics
