@@ -884,6 +884,7 @@ namespace eval ::evdev {
 
     foreach {type code translation} {
 	EV_SYN SYN_REPORT *
+	EV_ABS ABS_PRESSURE {}
 	EV_ABS ABS_MT_SLOT t
 	EV_ABS ABS_MT_POSITION_X x
 	EV_ABS ABS_MT_POSITION_Y y
@@ -901,7 +902,10 @@ namespace eval ::evdev {
 	EV_ABS ABS_MT_TOOL_Y {}
 	EV_ABS ABS_X {}
 	EV_ABS ABS_Y {}
+	EV_KEY BTN_TOOL_FINGER {}
 	EV_KEY BTN_TOUCH {}
+	EV_KEY BTN_TOOL_DOUBLETAP {}
+	EV_KEY BTN_TOOL_TRIPLETAP {}
     } {
 	set type [expr {0+[dict get $namevalues $type]}]
 	set code [expr {0+[dict get $namevalues $code]}]

@@ -1,0 +1,4 @@
+* 12 string guitar and mandolin should group the doubled strings under a single button
+* zither needs to group the strings into fretted, accompaniment, bass, and contrabass
+* lyre is not fretted, nor are other harps
+* autoharp is not fretted, but it has muting

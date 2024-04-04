@@ -11,5 +11,6 @@
 package ifneeded ::evdev 1.0 [list source [file join $dir evdev.tcl]]
 package ifneeded ::midi 1.0 [list source [file join $dir midi.tcl]]
 package ifneeded ::params 1.0 [list source [file join $dir params.tcl]]
-package ifneeded ::tuning 1.0 [list source [file join $dir tuning.tcl]]
+package ifneeded ::presets 1.0 [list source [file join $dir presets.tcl]]
+package ifneeded ::rawtuning 1.0 [list source [file join $dir rawtuning.tcl]]
 package ifneeded ::window 1.0 [list source [file join $dir window.tcl]]

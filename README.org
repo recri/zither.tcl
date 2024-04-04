@@ -1,1 +1,47 @@
 * Zither, instruments with many strings on multitouch screens.
+* Oh, other isomorphic keyboards
+	https://en.wikipedia.org/wiki/Isomorphic_keyboard
+** Chromatic button accordion
+	https://en.wikipedia.org/wiki/Chromatic_button_accordion
+** Harpejji
+	https://en.wikipedia.org/wiki/Harpejji
+** Starrboard
+	https://en.wikipedia.org/wiki/StarrBoard
+** Chapman Stick
+	https://en.wikipedia.org/wiki/Chapman_Stick
+	5 bass strings in fifths from center up
+	5 melody strings in fourths from center up
+	C above 5 string bass B to D below guitar high D
+** Jankó - piano
+	https://en.wikipedia.org/wiki/Jank%C3%B3_keyboard
+** Wicki-Hayden - bandoneon and concertina
+	https://en.wikipedia.org/wiki/Wicki%E2%80%93Hayden_note_layout
+** Muto -
+** Array Mbira -
+	https://en.wikipedia.org/wiki/Array_mbira
+** Dodeka keyboard
+	https://en.wikipedia.org/wiki/Dodeka_keyboard
+** Harmonic table
+	https://en.wikipedia.org/wiki/Harmonic_table_note_layout
+** Lumatone
+	https://www.lumatone.io/
+* Oh, Musix Pro already does this, for Mac users.
+* Oh, the Chapman Stick is a six string bass, tuned in fifths, from
+ high down to low, and a six string guitar, tuned in fourtsh, from
+ low to high, so 12 strings, or 10 strings by dropping a pair of
+ strings, or you could do a 10 string with 4 bass and 6 melody
+ strings.
+** Looking at stickman.com videos, one holds the stick like a cello
+   with a cross brace resting on his lap, the head of the stick over
+   his left shoulder.
+*** That would be a very nice way to mount a phone, or two phones, or
+   a narrow touch screen, on an actual stick to place the tapping screen
+   at nipple height where both hands can reach comfortably.
+*** SPECIFICATIONS for 12-String Stick Guitar®, all tunings:
+**** Dimensions 37 1/4" (94.6cm) x 3 3/4" (9.5cm) x 1 3/4" (4.5cm)
+**** Neck thickness 7/8" (2.2cm), scale length 26 1/2" (67.3cm)
+**** String spacing .300" (7.62mm), Group spacing .380" (9.14mm)
+**** Average weight 7.6 lbs (2.72kg)
+    (weight depends on material and pickups)
+* There is a 8.8 inch touchscreen, 1360x480 pixels, hdmi + usb
+  for $75 at amazon, suddenly makes a lot of sense.

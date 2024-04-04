@@ -21,22 +21,27 @@ package provide ::window 1.0
 
 package require ::params
 package require ::midi
+package require ::presets
 package require ::evdev
 
 # data in the menu
 
 namespace eval ::window {
+
     array set defaults { 
 	key C
 	mode Ionian
-	frets 14
-	octave C4
+	frets 13
 	strings 6
-	tuning guitar-6
+	capo 0
+	octave C4
+	tuning {0 5 5 5 4 5}
+	root E2
+	preset guitar-6
     }
 
-    proc adjust {w which} {
-	puts "adjust $w $which (which is $::window::data($which))"
+    proc adjust {w which {redraw 1}} {
+	# puts "adjust $w $which $redraw (which is $::window::data($which))"
 	# okay, so these winfo calls allow the global touch coordinates to be mapped
 	# into the window coordinates
 	#puts "winfo geometry $w.t  => [winfo geometry $w.t]"
@@ -47,26 +52,26 @@ namespace eval ::window {
 	# the fretboard is a rectangle of "buttons" frets wide and strings high
 	# which has a tuning specified by the root note in the lower left corner
 	switch $which {
-	    key {
-		# the key determines which note is the root of the scale
+	    frets {	# the number of frets on the fretboard
 	    }
-	    mode {
-		# the mode determines which scale is labelled from the root
+	    strings {	# the number of strings on the fretboard
 	    }
-	    frets {
-		# frets determines the width of the fretboard
+	    root {	# the note of the open string at bottom/closest to player
 	    }
-	    tuning {
-		# tuning specifies the number of strings and what pitch they're tuned to
-		# the following is not always true, there are | marking groups of strings
-		# and some strings are unfretted drones or accompaniment
-		# 
-		set ::window::data(strings) [llength $::window::data(tuning)];
+	    tuning {	# the intervals between strings starting from the root
 	    }
-	    octave {
-		# octave shifts the whole fretboard up or down by 12 semitones
-		# it actually has no effect on the fretboard at all, only on the 
-		# frequencies of the notes played
+	    key {	# the key determines which note is the root of the scale
+	    }
+	    mode {	# the mode determines which scale is labelled from the root
+	    }
+	    octave {	# octave shifts the whole fretboard up or down by 12 semitones
+	    }
+	    preset {	# presets define frets, strings, root, and tuning
+		# puts "preset $::window::data(preset) -> [::presets::value $::window::data(preset)]"
+		foreach {key val} [::presets::value $::window::data(preset)] {
+		    set ::window::data($key) $val
+		}
+		adjust $w $key 0
 	    }
 	    default {
 		error "no case for $which in adjust"
@@ -81,14 +86,61 @@ namespace eval ::window {
 	set chgt [winfo height $w.c]
 	set fwid [expr {$cwid/$::window::data(frets)}]
 	set shgt [expr {$chgt/$::window::data(strings)}]
-		       
-	for {set string 0} {$string < $::window::data(strings)} {incr string} {
-	    set y [expr {$string*$shgt+$shgt/2.0}]
-	    $w.c create line 0 $y $cwid $y -fill white -tag string
+	set keynote [::midi::name-to-note $::window::data(key)]
+	set scalenotes [lmap n [::midi::get-mode $::window::data(mode)] {expr {($keynote+$n)%12}}]
+
+	set in 4
+	set x0 $in
+	set y0 $in
+	set xm [expr {$fwid/2.0}]
+	set ym [expr {$shgt/2.0}]
+	set xc [expr {$fwid-$in}]
+	set yc [expr {$shgt-$in}]
+		
+	set button [list $x0 $y0 $x0 $ym $x0 $yc $xm $yc $xc $yc $xc $ym $xc $y0 $xm $y0]
+
+	if {{MyButtonFont} ni [font names]} {
+	    font create MyButtonFont {*}[font configure TkHeadingFont] -size 16
 	}
-	for {set fret 0} {$fret < $::window::data(frets)} {incr fret} {
-	    set x [expr {$fret*$fwid}]
-	    $w.c create line $x 0 $x $chgt -fill white -tag fret
+	array set stringnote {}
+
+	for {set string 0} {$string < $::window::data(strings)} {incr string} {
+	    set y [expr {$chgt-($string+0.5)*$shgt}]
+	    # $w.c create line 0 $y $cwid $y -fill white -tag string
+	    set y [expr {$y-$shgt*0.5}]
+	    if {$string == 0} {
+		set stringnote($string) [::midi::name-octave-to-note $::window::data(root)]
+	    } else {
+		set previous [expr {$string-1}]
+		# puts "string $string previous $previous tuning {$::window::data(tuning)}"
+		set stringnote($string) [expr {$stringnote($previous)+[lindex $::window::data(tuning) $string]}]
+	    }
+	    for {set fret 0} {$fret < $::window::data(frets)} {incr fret} {
+		set x [expr {$fret*$fwid}]
+		# redraw fret
+		# if {$string == 0} { $w.c create line $x 0 $x $chgt -fill white -tag fret }
+		# redraw button
+		# $w.c create oval $x $y [expr {$x+$fwid}] [expr {$y+$shgt}] -outline white -fill {}
+		set xc [expr {$x+$fwid}]
+		set yc [expr {$y+$shgt}]
+		set p [$w.c create polygon $button -outline white -fill {} -smooth true]
+		$w.c move $p $x $y
+		# label button
+		set l [$w.c create text [expr {$x+0.5*$fwid}] [expr {$y+0.5*$shgt}] -text "$string.$fret" -anchor c -fill white -font MyButtonFont]
+		# label with notes
+		set note [expr {$stringnote($string)+$fret}]
+		if {[lsearch -exact -integer $scalenotes [expr {$note % 12}]] >= 0} {
+		    $w.c itemconfigure $l -text [::midi::note-to-name $note]
+		    if {$keynote == ($note % 12)} {
+			$w.c itemconfigure $p -width 5 -outline white
+		    } else {
+			$w.c itemconfigure $p -width 2 -outline grey
+		    }
+		} else {
+		    $w.c itemconfigure $l -text {}
+		    $w.c itemconfigure $p -outline darkgrey -width 1
+		}
+	    }
 	}
     }
     
@@ -126,14 +178,15 @@ namespace eval ::window {
 	pack [label $w.t.fretslabel -text {Frets:}] -side left
 	pack [spinbox $w.t.frets -textvar ::window::data(frets) -width 2 -from 8 -to 26 -increment 2 -command [list ::window::adjust $w frets]] -side left
 	
-	# menu of tunings
-	set tunings [::midi::get-tunings]
-	set width [max-width $tunings]
-	pack [label $w.t.tunelabel -text {Tuning:}] -side left
-	pack [menubutton $w.t.tuning -textvar ::window::data(tuning) -width $width -menu .t.tuning.m] -side left
-	menu $w.t.tuning.m -tearoff no
-	foreach tuning $tunings {
-	    $w.t.tuning.m add radiobutton -label $tuning -variable ::window::data(tuning) -value $tuning -command [list ::window::adjust $w tuning]
+	# menu of presets
+	# FIX.ME - go to two level menu
+	set presets [::presets::keys]
+	set width [max-width $presets]
+	pack [label $w.t.presetlabel -text {Preset:}] -side left
+	pack [menubutton $w.t.preset -textvar ::window::data(preset) -width $width -menu .t.preset.m] -side left
+	menu $w.t.preset.m -tearoff no
+	foreach preset $presets {
+	    $w.t.preset.m add radiobutton -label $preset -variable ::window::data(preset) -value $preset -command [list ::window::adjust $w preset]
 	}
 
 	# set default values
@@ -143,6 +196,6 @@ namespace eval ::window {
 	pack [button $w.t.quit -text Quit -command {destroy .}] -side right
 	pack [button $w.t.panic -text Panic -foreground red -command {stop sound}] -side right
 	
-	redraw $w
+	bind $w.c <Configure> [list ::window::redraw  $w]
     }
 }

@@ -57,6 +57,21 @@ namespace eval ::midi {
 	octave {C C# D D# E F F# G G# A A# B}
     }
 
+    set enharmonics [dict create {*}{
+	B# 0 C 0 
+	C# 1 Db 1 
+	D 2 
+	D# 3 Eb 3 
+	E 4 Fb 4
+	E# 5 F 5 
+	F# 6 Gb 6
+	G 7
+	G# 8 Ab 8
+	A 9
+	A# 10 Bb 10
+	B 11 Cb 11
+    }]
+
     ##
     ## keys in cycle of fifths order
     ## with semitone offset from C
@@ -69,7 +84,7 @@ namespace eval ::midi {
     ## synonymous key names
     ##
     set keysyn [dict create {*}{
-	Gb F#   F# Gb   Db C#   C# Db   Ab B   B Ab
+	Gb F#   F# Gb   Db C#   C# Db
     }]
     ##
     ## modern modes, names and displacements from root
@@ -92,30 +107,6 @@ namespace eval ::midi {
     }]
 
     ##
-    ## short tuning catalog
-    ##
-    set tunings [dict create {*}{
-	dulcimer-3 {D4 A3 D3}
-	dulcimer-4 {D4 D4 A3 D3}
-	bass-4 {E1 A1 D2 G2}
-	ukulele-4 {G4 C4 E4 A4}
-	banjo-4 {C3 G3 D4 A4}
-	violin-4 {G3 D4 A4 E5}
-	bass-5 {B0 E1 A1 D2 G2}
-	banjo-5 {G4 C3 G3 B3 D4}
-	sawmill-5 {G4 D3 G3 C4 D4}
-	guitar-6 {E2 A2 D3 G3 B3 E4}
-	fourths-6 {E2 A2 D3 G3 C4 F4}
-	thirds-6 {E2 G#2 C3 E3 G#3 C4}
-	fifths-6 {C2 G2 D3 A3 E4 B4}
-	guitar-7 {D2 G2 B2 D3 G3 B3 D4}
-	guitar-12 {E1 E2 A1 A2 D2 D3 G2 G3 B3 B3 E4 E4}
-	mandolin-8 {G3 G3 D4 D4 A4 A4 E5 E5}
-	lyre-7 {D4 E4 G4 A4 B4 D5 E5}
-	lyre-16 {G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 F5 G5 A5}
-    }]
-
-    ##
     ## midi translations
     ##
 
@@ -131,9 +122,10 @@ namespace eval ::midi {
     # convert a midi note into a frequency in Hertz
     proc mtof {note} { lindex ${::midi::cache-note-to-hertz} $note }
     
-    # compute a note name of a midi note number
+    # compute a note name of a midi note number, and vice versa
+    # the second translates both flatted and sharped notes
     proc note-to-name {note} { return [lindex $::midi::notes(octave) [expr {$note%12}]] }
-    proc name-to-note {name} { return [lsearch $::midi::notes(octave) $name] }
+    proc name-to-note {name} { dict get $::midi::enharmonics $name }
 
     # compute the standard octave of a midi note number
     proc note-to-octave {note} { return [expr {($note/12)-1}] }
@@ -191,6 +183,3 @@ proc ::midi::get-octave {octave} { dict get $::midi::octaves $octave }
 
 proc ::midi::get-modes {} { dict keys $::midi::modes }
 proc ::midi::get-mode {mode} { dict get $::midi::modes $mode }
-
-proc ::midi::get-tunings {} { dict keys $::midi::tunings }
-proc ::midi::get-tuning {tuning} { dict get $::midi::tunings $tuning }

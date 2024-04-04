@@ -33,8 +33,11 @@ namespace eval ::params {
     proc ::params::y {y} { set y }
     switch $::tcl_platform(machine) {
 	x86_64 { 
-	    set ::params::dev /dev/input/event4 
+	    # /dev/input/event4 
+	    set ::params::dev {}
 	    set ::params::fullscreen 0
+	    #set ::params::width 1600
+	    #set ::params::height 960
 	}
 	aarch64 { 
 	    set ::params::dev /dev/input/event10

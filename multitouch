@@ -80,13 +80,15 @@ proc evdev-handler {w event} {
     set ::data(t) $t
 }
 
-after 1 {::evdev::touch $::params::dev {::evdev-handler .c}}
+if {$::params::dev ne {}} {
+    after 1 {::evdev::touch $::params::dev {::evdev-handler .c}}
+}
 
 # may or may not set wish . to fill screen
 wm attributes . -fullscreen $::params::fullscreen
 
 ::window::main {}
-.c configure -bg black -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0
+.c configure -width $::params::width -height $::params::height -bg black -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0
 bind .c <<TouchBegin>> { puts "<<TouchBegin>> %d %x %y" }
 bind .c <<TouchUpdate>> { puts "<<TouchUpdate>> %d %x %y" }
 bind .c <<TouchEnd>> { puts "<<TouchEnd>> %d %x %y" }
