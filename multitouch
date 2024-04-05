@@ -24,7 +24,11 @@ lappend auto_path . ../keyer/lib
 package require ::params
 package require ::evdev
 package require ::window
-package require ::sound
+package require sound
+
+# may or may not set wish . to fill screen
+# works some times but not others
+wm attributes . -fullscreen $::params::fullscreen
 
 array set data {
     t 0
@@ -84,9 +88,6 @@ proc evdev-handler {w event} {
 if {$::params::dev ne {}} {
     after 1 {::evdev::touch $::params::dev {::evdev-handler .c}}
 }
-
-# may or may not set wish . to fill screen
-wm attributes . -fullscreen $::params::fullscreen
 
 ::window::main {}
 .c configure -width $::params::width -height $::params::height -bg black -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0

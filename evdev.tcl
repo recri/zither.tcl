@@ -975,7 +975,7 @@ proc ::evdev::repl {repl input handler} {
     set fp [open $input r]
     fconfigure $fp -encoding binary -buffering none -blocking 0
     fileevent $fp readable [list $repl $fp $handler]
-    puts "filevent {$input} readable {$repl $fp $handler}"
+    # puts "filevent {$input} readable {$repl $fp $handler}"
 }
     
 proc ::evdev::mouse {input {handler {puts}}} {

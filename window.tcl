@@ -162,23 +162,16 @@ namespace eval ::window {
 	set fpart [expr {int($x/$::window::data(fwid))}]
 	set freq [midi::mtof [expr {$spart+$fpart}]]
 	# puts "note $action $id $x $y $s $f [::midi::note-to-name-octave $note]"
-	::sound::note $action $id $freq
+	sound::note $action $id $freq
     }
 
     proc max-width {list} {
 	tcl::mathfunc::max {*}[lmap i $list {string length $i}]
     }
 
-    proc main {w} {
-	# canvas fretboard
-	pack [canvas $w.c] -side top -fill both -expand true
-	
+    proc control {w} {
 	# controls
 	toplevel $w.t
-	wm withdraw $w.t
-	
-	# set default values, first time
-	array set ::window::data [array get ::window::defaults]
 	
 	# spinbox of keys
 	set keys [::midi::get-keys]
@@ -216,9 +209,17 @@ namespace eval ::window {
 	array set ::window::data [array get ::window::defaults]
 	
 	# control buttons
-	pack [button $w.t.done -text Dismiss -command [list wm withdraw $w.t]] -side top -fill x -expand true
+	pack [button $w.t.done -text Dismiss -command [list destroy $w.t]] -side top -fill x -expand true
 	pack [button $w.t.quit -text Quit -command {destroy .}] -side top -fill x -expand true
-	pack [button $w.t.panic -text Panic -foreground red -command {stop sound}] -side top -fill x -expand true
+	pack [button $w.t.panic -text Panic -foreground red -command {sound::stop}] -side top -fill x -expand true
+    }
+
+    proc main {w} {
+	# canvas fretboard
+	pack [canvas $w.c] -side top -fill both -expand true
+
+	# set default values, first time
+	array set ::window::data [array get ::window::defaults]
 	
 	bind $w.c <Configure> [list ::window::redraw  $w]
 	bind $w.c <Button-3> [list wm deiconify $w.t]

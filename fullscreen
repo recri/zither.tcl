@@ -1,0 +1,9 @@
+#!/usr/bin/wish
+
+lappend auto_path .
+
+package require ::params
+
+wm attributes . -fullscreen $::params::fullscreen
+
+pack [canvas .c] -fill both -expand true
