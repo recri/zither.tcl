@@ -61,7 +61,6 @@ namespace eval ::presets {
 	banjo-5-open-D       { strings 5 root F#4 tuning {0 -16 4 3 5}}
 	banjo-5-double-D      { strings 5 root A4 tuning {0 -19 7 5 2}}
 	banjo-5-open-A        { strings 5 root A4 tuning {0 -17 5 4 3}}
-	banjo-5-sawmill       { strings 5 root G4 tuning {0 -17 5 5 2}}
 	guitar-6              { strings 6 root E2 tuning {0 5 5 5 4 5}}
 	fourths-6             { strings 6 root E2 tuning {0 5 5 5 5 5}}
 	thirds-6              { strings 6 root E2 tuning {0 4 4 4 4 4}}
@@ -101,7 +100,6 @@ namespace eval ::presets {
 	bass-guitar-5-low
 	bass-guitar-5-high
 	banjo-5
-	sawmill-5
 	guitar-6
 	guitar-7
 	mandolin-8

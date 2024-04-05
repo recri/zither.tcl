@@ -34,13 +34,17 @@ namespace eval ::params {
     switch $::tcl_platform(machine) {
 	x86_64 { 
 	    # /dev/input/event4 
+	    set ::params::mouse 1
+	    set ::params::touch 0
 	    set ::params::dev {}
 	    set ::params::fullscreen 0
 	    #set ::params::width 1600
 	    #set ::params::height 960
 	}
 	aarch64 { 
-	    set ::params::dev /dev/input/event10
+	    set ::params::mouse 0
+	    set ::params::touch 1
+	    set ::params::dev /dev/input/event11
 	    set ::params::fullscreen 1
 	}
 	default { error "unknown machine $::tcl_platform(machine) in params.tcl }

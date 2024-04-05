@@ -31,24 +31,17 @@ namespace eval ::window {
     array set defaults { 
 	tonic C
 	mode Ionian
-	frets 13
-	strings 6
 	nut 0
-	octave C4
-	tuning {0 5 5 5 4 5}
-	root E2
-	preset guitar-6
+	frets 13
+	strings 5
+	root E1
+	tuning {0 5 5 5 5}
+	preset bass-guitar-5-high
+	sound bass
     }
 
     proc adjust {w which {redraw 1}} {
-	# puts "adjust $w $which $redraw (which is $::window::data($which))"
-	# okay, so these winfo calls allow the global touch coordinates to be mapped
-	# into the window coordinates
-	#puts "winfo geometry $w.t  => [winfo geometry $w.t]"
-	#puts "winfo geometry $w.c  => [winfo geometry $w.c]"
-	#puts "winfo rootx $w.c [winfo rootx $w.c] winfo rooty $w.c [winfo rooty $w.c]"
-	#puts "winfo width $w.c [winfo width $w.c] winfo height $w.c [winfo height $w.c]"
-	
+
 	# the fretboard is a rectangle of "buttons" frets wide and strings high
 	# which has a tuning specified by the root note in the lower left corner
 	switch $which {
@@ -72,6 +65,9 @@ namespace eval ::window {
 		    set ::window::data($key) $val
 		}
 		adjust $w $key 0
+	    }
+	    sound {
+		::sound::select $::window::data(sound)
 	    }
 	    default {
 		error "no case for $which in adjust"
@@ -162,6 +158,7 @@ namespace eval ::window {
 	set fpart [expr {int($x/$::window::data(fwid))}]
 	set freq [midi::mtof [expr {$spart+$fpart}]]
 	# puts "note $action $id $x $y $s $f [::midi::note-to-name-octave $note]"
+	# puts "sound::note $action $id $freq"
 	sound::note $action $id $freq
     }
 
@@ -170,48 +167,52 @@ namespace eval ::window {
     }
 
     proc control {w} {
+	if {[winfo exists $w.controls]} { destroy $w.controls }
+
 	# controls
-	toplevel $w.t
+	toplevel $w.controls
 	
 	# spinbox of keys
 	set keys [::midi::get-keys]
 	set width [max-width $keys]
-	pack [labelframe $w.t.key -text {Tonic}] -side top -fill x -expand true
-	pack [spinbox $w.t.key.spin -textvariable ::window::data(tonic) -width $width -values $keys -command [list ::window::adjust $w tonic]]
+	pack [labelframe $w.controls.key -text {Tonic}] -side top -fill x -expand true
+	pack [spinbox $w.controls.key.spin -textvariable ::window::data(tonic) -width $width -values $keys -command [list ::window::adjust $w tonic]]
 	
 	# spinbox of modes
 	set modes [::midi::get-modes]
 	set width [max-width $modes]
-	pack [labelframe $w.t.mode -text {Mode}] -side top -fill x -expand true
-	pack [spinbox $w.t.mode.spin -textvar ::window::data(mode) -width $width -values $modes -command [list ::window::adjust $w mode]]
+	pack [labelframe $w.controls.mode -text {Mode}] -side top -fill x -expand true
+	pack [spinbox $w.controls.mode.spin -textvar ::window::data(mode) -width $width -values $modes -command [list ::window::adjust $w mode]]
 	
 	# spinbox of nut semitone offsets from specified preset
 	set width 3
-	pack [labelframe $w.t.nut -text {Nut}] -side top -fill x -expand true
-	pack [spinbox $w.t.nut.spin -textvariable ::window::data(nut) -width $width -from -12 -to 12 -value 0 -command [list ::window::adjust $w nut]]
+	pack [labelframe $w.controls.nut -text {Nut}] -side top -fill x -expand true
+	pack [spinbox $w.controls.nut.spin -textvar ::window::data(nut) -width $width -from -24 -to 24 -increment 1 -command [list ::window::adjust $w nut]]
 	
 	# spinbox of frets
-	pack [labelframe $w.t.frets -text {Frets}] -side top -fill x -expand true
-	pack [spinbox $w.t.frets.spin -textvar ::window::data(frets) -width 2 -from 8 -to 26 -increment 2 -command [list ::window::adjust $w frets]]
+	pack [labelframe $w.controls.frets -text {Frets}] -side top -fill x -expand true
+	pack [spinbox $w.controls.frets.spin -textvar ::window::data(frets) -width 2 -from 1 -to 36 -increment 1  -command [list ::window::adjust $w frets]]
 	
 	# menu of presets
 	# FIX.ME - go to multi level menu
 	set presets [::presets::keys]
 	set width [max-width $presets]
-	pack [labelframe $w.t.preset -text {Preset}] -side top -fill x -expand true
-	pack [menubutton $w.t.preset.menu -textvar ::window::data(preset) -width $width -menu $w.t.preset.menu.m]
-	menu $w.t.preset.menu.m -tearoff no
-	foreach preset $presets {
-	    $w.t.preset.menu.m add radiobutton -label $preset -variable ::window::data(preset) -value $preset -command [list ::window::adjust $w preset]
-	}
+	pack [labelframe $w.controls.preset -text {Preset}] -side top -fill x -expand true
+	pack [spinbox $w.controls.preset.spin -textvar ::window::data(preset) -width $width -values $presets -command [list ::window::adjust $w preset]]
+
+	# menu of sounds
+	set sounds [::sound::list-sounds]
+	set width [max-width $sounds]
+	pack [labelframe $w.controls.sound -text {Sound}] -side top -fill x -expand true
+	pack [spinbox $w.controls.sound.spin -textvar ::window::data(sound) -width $width -values $sounds -command [list ::window::adjust $w sound]]
 
 	# set default values
 	array set ::window::data [array get ::window::defaults]
 	
 	# control buttons
-	pack [button $w.t.done -text Dismiss -command [list destroy $w.t]] -side top -fill x -expand true
-	pack [button $w.t.quit -text Quit -command {destroy .}] -side top -fill x -expand true
-	pack [button $w.t.panic -text Panic -foreground red -command {sound::stop}] -side top -fill x -expand true
+	pack [button $w.controls.done -text Dismiss -command [list destroy $w.controls]] -side top -fill x -expand true
+	pack [button $w.controls.quit -text Quit -command {destroy .}] -side top -fill x -expand true
+	pack [button $w.controls.panic -text Panic -foreground red -command {sound::stop}] -side top -fill x -expand true
     }
 
     proc main {w} {
@@ -221,15 +222,21 @@ namespace eval ::window {
 	# set default values, first time
 	array set ::window::data [array get ::window::defaults]
 	
+	# set default values, second time
+	foreach {key value} [array get ::window::data] { ::window::adjust $w $key }
+
 	bind $w.c <Configure> [list ::window::redraw  $w]
-	bind $w.c <Button-3> [list wm deiconify $w.t]
+	bind $w.c <Button-3> [list ::window::control $w]
 
-	bind $w.c <<TouchBegin>> {::window::note + %d %x %y}
-	bind $w.c <<TouchUpdate>> {::window::note . %d %x %y}
-	bind $w.c <<TouchEnd>> {::window::note - %d %x %y}
-
-	bind $w.c <ButtonPress-1> {::window::note + f %x %y}
-	bind $w.c <B1-Motion> {::window::note . f %x %y}
-	bind $w.c <ButtonRelease-1> {::window::note - f %x %y}
+	if {$::params::touch} {
+	    bind $w.c <<TouchBegin>> {::window::note + %d %x %y}
+	    bind $w.c <<TouchUpdate>> {::window::note . %d %x %y}
+	    bind $w.c <<TouchEnd>> {::window::note - %d %x %y}
+	}
+	if {$::params::mouse} {
+	    bind $w.c <ButtonPress-1> {::window::note + f %x %y}
+	    bind $w.c <B1-Motion> {::window::note . f %x %y}
+	    bind $w.c <ButtonRelease-1> {::window::note - f %x %y}
+	}
     }
 }
