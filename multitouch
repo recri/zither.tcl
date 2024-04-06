@@ -26,10 +26,17 @@ package require ::window
 package require sound
 package require touch
 
-# may or may not set wish . to fill screen
-# works some times but not others
-wm attributes . -fullscreen $::params::fullscreen
 
 touch::init .c
 ::window::main {}
 .c configure -width $::params::width -height $::params::height -bg black -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0
+
+#
+# this appears to have some timing issues
+#
+after 1 {
+    if {$::params::fullscreen} {
+	wm attributes . -fullscreen $::params::fullscreen
+	# puts [winfo geometry .]
+    }
+}

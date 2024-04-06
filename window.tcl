@@ -29,6 +29,7 @@ package require ::evdev
 namespace eval ::window {
 
     array set defaults { 
+	orientation 180
 	tonic C
 	mode Ionian
 	nut 0
@@ -45,6 +46,8 @@ namespace eval ::window {
 	# the fretboard is a rectangle of "buttons" frets wide and strings high
 	# which has a tuning specified by the root note in the lower left corner
 	switch $which {
+	    orientation {	# fretboard layout on screen
+	    }
 	    frets {	# the number of frets on the fretboard
 	    }
 	    strings {	# the number of strings on the fretboard
@@ -108,22 +111,14 @@ namespace eval ::window {
 	array unset ::window::stringnote
 
 	for {set string 0} {$string < $::window::data(strings)} {incr string} {
-	    set y [expr {$chgt-($string+0.5)*$shgt}]
-	    # $w.c create line 0 $y $cwid $y -fill white -tag string
-	    set y [expr {$y-$shgt*0.5}]
 	    if {$string == 0} {
 		set ::window::stringnote($string) [expr {[::midi::name-octave-to-note $::window::data(root)]+$::window::data(nut)}]
 	    } else {
 		set previous [expr {$string-1}]
-		# puts "string $string previous $previous tuning {$::window::data(tuning)}"
 		set ::window::stringnote($string) [expr {$::window::stringnote($previous)+[lindex $::window::data(tuning) $string]}]
 	    }
 	    for {set fret 0} {$fret < $::window::data(frets)} {incr fret} {
-		set x [expr {$fret*$fwid}]
-		# redraw fret
-		# if {$string == 0} { $w.c create line $x 0 $x $chgt -fill white -tag fret }
-		# redraw button
-		# $w.c create oval $x $y [expr {$x+$fwid}] [expr {$y+$shgt}] -outline white -fill {}
+		foreach {x y} [fret-to-window $string $fret] break;
 		set xc [expr {$x+$fwid}]
 		set yc [expr {$y+$shgt}]
 		set p [$w.c create polygon $button -outline white -fill {} -smooth true]
@@ -132,34 +127,59 @@ namespace eval ::window {
 		set l [$w.c create text [expr {$x+0.5*$fwid}] [expr {$y+0.5*$shgt}] -text "$string.$fret" -anchor c -fill white -font MyButtonFont]
 		# label with notes
 		set note [expr {$::window::stringnote($string)+$fret}]
+		$w.c itemconfigure $l -text [::midi::note-to-name $note] -angle [expr {90+$::window::data(orientation)}]
 		if {[lsearch -exact -integer $scalenotes [expr {$note % 12}]] >= 0} {
 		    $w.c itemconfigure $l -text [::midi::note-to-name $note]
 		    if {$keynote == ($note % 12)} {
+			# highlight the tonic
 			$w.c itemconfigure $p -width 5 -outline white
 		    } else {
-			$w.c itemconfigure $p -width 2 -outline grey
+			# emphasize the scale
+			$w.c itemconfigure $p -width 2 -outline white
 		    }
 		} else {
-		    $w.c itemconfigure $l -text {}
-		    $w.c itemconfigure $p -outline darkgrey -width 1
+		    # deemphasize the accidentals
+		    $w.c itemconfigure $l -fill darkgrey
+		    $w.c itemconfigure $p -width 1 -outline grey20
 		}
 	    }
 	}
     }
     
+    # translate window coordinates, x and y increasing from upper right corner
+    # into string and fret
+    proc window-to-fret {x y} {
+	switch $::window::data(orientation) {
+	    0 {
+		set s [expr {int(($::window::data(chgt)-$y)/$::window::data(shgt))}]
+		set f [expr {int($x/$::window::data(fwid))}]
+	    }
+	    180 {
+		set s [expr {int($y/$::window::data(shgt))}]
+		set f [expr {$::window::data(frets)-int($x/$::window::data(fwid))-1}]
+	    }
+	}
+	list $s $f
+    }
+
+    # translate string and fret coordinates into window coordinates
+    proc fret-to-window {string fret} {
+	switch $::window::data(orientation) {
+	    0 {
+		set x [expr {$fret*$::window::data(fwid)}]
+		set y [expr {($::window::data(strings)-($string+1.0))*$::window::data(shgt)}];
+	    }
+	    180 {
+		set x [expr {($::window::data(frets)-$fret-1)*$::window::data(fwid)}]
+		set y [expr {$string*$::window::data(shgt)}]
+	    }
+	}
+	list $x $y
+    }
+    
     proc note {action id x y} {
-	# set s [expr {($::window::data(chgt)-$y)/$::window::data(shgt)}]
-	# set f [expr {$x/$::window::data(fwid)}]
-	set is [expr {int(($::window::data(chgt)-$y)/$::window::data(shgt))}]
-	set if [expr {int($x/$::window::data(fwid))}]
-	# set fs [expr {$s-$is}]
-	# set ff [expr {$f-$if}]
-	set spart $::window::stringnote($is)
-	set fpart [expr {int($x/$::window::data(fwid))}]
-	set freq [midi::mtof [expr {$spart+$fpart}]]
-	# puts "note $action $id $x $y $s $f [::midi::note-to-name-octave $note]"
-	# puts "sound::note $action $id $freq"
-	sound::note $action $id $freq
+	foreach {string fret} [window-to-fret $x $y] break
+	sound::note $action $id [midi::mtof [expr {$::window::stringnote($string)+$fret}]]
     }
 
     proc max-width {list} {

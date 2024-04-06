@@ -58,9 +58,11 @@ namespace eval ::presets {
 	banjo-5-open-G-alt    { strings 5 root G4 tuning {0 -19 7 4 3}}
 	banjo-5-double-C      { strings 5 root G4 tuning {0 -19 7 5 2}}
 	banjo-5-sawmill       { strings 5 root G4 tuning {0 -17 5 5 2}}
-	banjo-5-open-D       { strings 5 root F#4 tuning {0 -16 4 3 5}}
+	banjo-5-open-D        { strings 5 root F#4 tuning {0 -16 4 3 5}}
 	banjo-5-double-D      { strings 5 root A4 tuning {0 -19 7 5 2}}
 	banjo-5-open-A        { strings 5 root A4 tuning {0 -17 5 4 3}}
+	bass-guitar-6-low     { strings 6 root B0 tuning {0 5 5 5 5 5}}
+	bass-guitar-6-high    { strings 6 root E1 tuning {0 5 5 5 5 5}}
 	guitar-6              { strings 6 root E2 tuning {0 5 5 5 4 5}}
 	fourths-6             { strings 6 root E2 tuning {0 5 5 5 5 5}}
 	thirds-6              { strings 6 root E2 tuning {0 4 4 4 4 4}}
@@ -88,6 +90,14 @@ namespace eval ::presets {
 	stick-10-6 { strings 10 root F#3 tuning {0 -7 -7 -7 -7 4 17 5 5 5}}
 	stick-10-7 { strings 10 root F#3 tuning {0 -7 -7 -7 -7 11 5 5 5 5}}
 	stick-10-8 { strings 10 root D#3 tuning {0 -7 -7 -7 -7 17 5 5 5 5}}
+
+	stick-12-1 { strings 12 root B3 tuning {0 -7 -7 -7 -7 -7 11 5 5 5 5 5}}
+	stick-12-2 { strings 12 root B3 tuning {0 -7 -7 -7 -7 -7 13 5 5 5 5 5}}
+	stick-12-3 { strings 12 root A3 tuning {0 -5 -7 -7 -7 -7 11 5 5 5 5 5}}
+	stick-12-4 { strings 12 root A3 tuning {0 -5 -7 -7 -7 -7 13 5 5 5 5 5}}
+	stick-12-5 { strings 12 root A3 tuning {0 -7 -7 -7 -7 -7 11 5 5 5 5 5}}
+	stick-12-6 { strings 12 root C#4 tuning {0 -7 -7 -7 -7 -7 11 5 5 5 5 5}}
+	stick-12-7 { strings 12 root A#3 tuning {0 -7 -7 -7 -7 -7 5 5 5 5 5 5}}
     }]
 
     set simple {
@@ -100,12 +110,15 @@ namespace eval ::presets {
 	bass-guitar-5-low
 	bass-guitar-5-high
 	banjo-5
+	bass-guitar-6-low
+	bass-guitar-6-high
 	guitar-6
 	guitar-7
 	mandolin-8
 	stick-8-1
 	stick-10-1
 	guitar-12
+	stick-12-1
     }
 }
 

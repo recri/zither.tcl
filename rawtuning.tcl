@@ -123,6 +123,10 @@ namespace eval ::rawtuning {
 	}
 
 	6 {
+	    bass-guitar {
+		low {B0 E1 A1 D2 G2 C3}
+		high {E1 A1 D2 G2 C3 F3}
+	    }
 	    guitar {
 		standard {E2 A2 D3 G3 B3 E4}
 		trivial {E2 E2 E3 E3 E4 E4}
@@ -233,8 +237,13 @@ namespace eval ::rawtuning {
 		standard {E1 E2 A1 A2 D2 D3 G2 G3 B3 B3 E4 E4}
 	    }
 	    stick {
-		1 {B3 E3 A2 D2 G1 C1 B1 E2 A2 D3 G3 C4}
-		1 {B3 E3 A2 D2 G1 C1 C#2 F#2 B2 E3 A3 D3}
+		1 {B3  E3  A2  D2 G1  C1  B1  E2  A2 D3 G3 C4}
+		2 {B3  E3  A2  D2 G1  C1  C#2 F#2 B2 E3 A3 D4}
+		3 {A3  E3  A2  D2 G1  C1  B1  E2  A2 D3 G3 C4}
+		4 {A3  E3  A2  D2 G1  C1  C#2 F#2 B2 E3 A3 D4}
+		5 {A3  D3  G2  C2 F1  Bb0 A1  D2  G2 C3 F3 Bb3}
+		6 {C#4 F#3 B2  E2 A1  D1  C#2 F#2 B2 E3 A3 D4}
+		7 {A#3 D#3 G#2 C#2 F#1 B0  E1  A1 D2 G2 C3 F3}
 	    }
 	}
 
