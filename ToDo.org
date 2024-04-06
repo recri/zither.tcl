@@ -3,3 +3,7 @@
 * lyre is not fretted, nor are other harps
 * autoharp is not fretted, but it has muting
 * allow a key to be specified for note-to-name to switch between # and b enharmonics
+* customize behavior when one string is touched at more than one point
+	currently playing all of them
+* redo with different sides up, rotate text to match
+* make the control panel into another canvas, just swap them.
