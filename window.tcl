@@ -227,8 +227,8 @@ namespace eval ::window {
 	bind $w.c <<TouchUpdate>> {::window::note . %d %x %y}
 	bind $w.c <<TouchEnd>> {::window::note - %d %x %y}
 
-	bind $w.c <ButtonPress-1> {::window::note + f %x %y}
-	bind $w.c <B1-Motion> {::window::note . f %x %y}
-	bind $w.c <ButtonRelease-1> {::window::note - f %x %y}
+	#bind $w.c <ButtonPress-1> {::window::note + f %x %y}
+	#bind $w.c <B1-Motion> {::window::note . f %x %y}
+	#bind $w.c <ButtonRelease-1> {::window::note - f %x %y}
     }
 }
