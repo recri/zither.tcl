@@ -29,6 +29,16 @@ package provide ::params 1.0
 namespace eval ::params {
     set ::params::width 800
     set ::params::height 480
+    array set ::params::defaults {
+	orientation 180
+	tonic C
+	mode Ionian
+	nut 0
+	frets 17
+	preset stick-10-1
+	strings 10 root E3 tuning {0 -7 -7 -7 -7 16 5 5 5 5}
+	sound guitar
+    }
     proc ::params::x {x} { set x }
     proc ::params::y {y} { set y }
     switch $::tcl_platform(machine) {

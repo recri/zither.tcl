@@ -28,19 +28,6 @@ package require ::evdev
 
 namespace eval ::window {
 
-    array set defaults { 
-	orientation 180
-	tonic C
-	mode Ionian
-	nut 0
-	frets 13
-	strings 5
-	root E1
-	tuning {0 5 5 5 5}
-	preset bass-guitar-5-high
-	sound bass
-    }
-
     proc adjust {w which {redraw 1}} {
 
 	# the fretboard is a rectangle of "buttons" frets wide and strings high
@@ -227,7 +214,7 @@ namespace eval ::window {
 	pack [spinbox $w.controls.sound.spin -textvar ::window::data(sound) -width $width -values $sounds -command [list ::window::adjust $w sound]]
 
 	# set default values
-	array set ::window::data [array get ::window::defaults]
+	array set ::window::data [array get params::defaults]
 	
 	# control buttons
 	pack [button $w.controls.done -text Dismiss -command [list destroy $w.controls]] -side top -fill x -expand true
@@ -240,7 +227,7 @@ namespace eval ::window {
 	pack [canvas $w.c] -side top -fill both -expand true
 
 	# set default values, first time
-	array set ::window::data [array get ::window::defaults]
+	array set ::window::data [array get ::params::defaults]
 	
 	# set default values, second time
 	foreach {key value} [array get ::window::data] { ::window::adjust $w $key }

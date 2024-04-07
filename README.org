@@ -181,4 +181,6 @@
 *** 1) involves single inlays on the 3rd, 5th, 7th, 9th, double inlays on the 12th, 
     single inlays on the 15th, 17th, 19th, and 21st, and if present, double inlays 
     on the 24th.
-    
+*** Split voices, run different synths on melody and bass.
+	run different voices on each string, or segments of strings
+*** Retune the nut differently for melody and bass.
