@@ -167,3 +167,18 @@
 *** and HID in to control, a rotary encoder with push switch should do.
 *** for audio in when we enable the breath control and mouthpieces
 *** for usb hid providing air pressure 
+** Oh, better ideas
+*** Graumont (Encycl. of Knots and Fancy Ropework) has designs for knotted
+    cigarette cases which could easily adapt to a hanging cell phone case.
+*** The way to switch to control mode on a phone is to turn it upside down so
+    you can look at it.
+*** with the low precision touch on the Pi Foundation display, I get crackling
+    when two fingers get to just the right distance.  G on first string B on
+    next string does it pretty regularly.
+*** The earphone cable gets tangled with everything else hanging down.
+*** Bling cell phone mounts
+*** Fret inlays on sticks, 2nd fret, then every 5 frets
+*** 1) involves single inlays on the 3rd, 5th, 7th, 9th, double inlays on the 12th, 
+    single inlays on the 15th, 17th, 19th, and 21st, and if present, double inlays 
+    on the 24th.
+    
