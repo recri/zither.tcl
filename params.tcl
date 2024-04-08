@@ -34,7 +34,7 @@ namespace eval ::params {
     array set ::params::params {
 	mouse 0
 	touch 1
-	dev /dev/input/event5
+	dev /dev/input/event10
 	fullscreen 1
 	width 800
 	height 480

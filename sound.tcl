@@ -49,12 +49,21 @@ proc ::sound::stop {} {
 }
 
 set ::sound::sounds [dict create {*}{
-    ks		faust::pm::ks
-    nylonGuitar	faust::pm::nylonGuitar
-    guitar	faust::pm::guitar
-    elecGuitar	faust::pm::elecGuitar
-    violin	faust::pm::violin
-    bass	faust::stk::bass
+    elecGuitar faust::pm::elecGuitar
+    guitar faust::pm::guitar
+    ks faust::pm::ks
+    marimba faust::pm::marimba
+    modularInterpInst faust::pm::modularInterpInst
+    nylonGuitar faust::pm::nylonGuitar
+    violin faust::pm::violin
+    bass faust::stk::bass
+    bowed faust::stk::bowed
+    harpsi faust::stk::harpsi
+    modalBar faust::stk::modalBar
+    piano faust::stk::piano
+    sitar faust::stk::sitar
+    tibetanBowl faust::stk::tibetanBowl
+    tunedBar faust::stk::tunedBar
 }]
 
 proc ::sound::list-sounds {} {
@@ -64,8 +73,9 @@ proc ::sound::list-sounds {} {
 proc ::sound::select {sound} {
     set ::sound::data(sound) $sound
     set ::sound::data(factory) [dict get $::sound::sounds $sound]
+    if {[info commands $::sound::data(factory)] eq {}} {
+	package require $::sound::data(factory)
+    }
 }
 
-dict for {key value} $::sound::sounds {
-    package require $value
-}
+sound::select guitar
