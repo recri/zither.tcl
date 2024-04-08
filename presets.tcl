@@ -1,5 +1,4 @@
-package provide ::presets 1.0
-
+package provide presets 1.0
 
 namespace eval ::presets {
     set flat {♭}

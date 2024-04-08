@@ -17,7 +17,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 # 
 
-package provide ::midi 1.0
+package provide midi 1.0
 
 namespace eval ::midi {
 
@@ -54,7 +54,8 @@ namespace eval ::midi {
 	Bb	70
 	B	71
 
-	octave {C C# D D# E F F# G G# A A# B}
+	octave-sharp {C C# D D# E F F# G G# A A# B}
+	octave-flat  {C Db D Eb E F Gb G Ab A Bb B}
     }
 
     set enharmonics [dict create {*}{
@@ -78,6 +79,10 @@ namespace eval ::midi {
     ##
     set keys [dict create {*}{
 	Gb 6 Db 1 Ab 8 Eb 3 Bb 10 F 5 C 0 G 7 D 2 A 9 E 4 B 11 F# 6 C# 1
+    }]
+
+    set keyisflat [dict create {*}{
+	Gb 1 Db 1 Ab 1 Eb 1 Bb 1 F 1 C 0 G 0 D 0 A 0 E 0 B 0 F# 0 C# 0
     }]
 
     ##
@@ -124,7 +129,13 @@ namespace eval ::midi {
     
     # compute a note name of a midi note number, and vice versa
     # the second translates both flatted and sharped notes
-    proc note-to-name {note} { return [lindex $::midi::notes(octave) [expr {$note%12}]] }
+    proc note-to-name {note {key C}} { 
+	if {[dict get $::midi::keyisflat $key]} {
+	    return [lindex $::midi::notes(octave-flat) [expr {$note%12}]] 
+	} else {
+	    return [lindex $::midi::notes(octave-sharp) [expr {$note%12}]] 
+	}
+    }
     proc name-to-note {name} { dict get $::midi::enharmonics $name }
 
     # compute the standard octave of a midi note number
@@ -132,7 +143,7 @@ namespace eval ::midi {
     proc octave-to-note {octave} { return [expr {($octave+1)*12}] }
 
     # put the two above together
-    proc note-to-name-octave {note} { return "[note-to-name $note][note-to-octave $note]" }
+    proc note-to-name-octave {note {key C}} { return "[note-to-name $note $key][note-to-octave $note]" }
     proc name-octave-to-note {name} {
 	if {[regexp {^([A-G][\#b]?)(|-?\d+)$} $name all note octave sharp]} {
 	    return [expr {[octave-to-note $octave]+[name-to-note $note$sharp]}]

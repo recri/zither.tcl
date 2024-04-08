@@ -1,7 +1,7 @@
 package provide touch 1.0
 
-package require ::evdev
-package require ::params
+package require evdev
+package require params
 
 namespace eval touch {
 
@@ -63,7 +63,7 @@ namespace eval touch {
 }
 
 proc touch::init {w} {
-    if {$::params::dev ne {}} {
-	::evdev::touch $::params::dev [list ::touch::evdev-handler $w]
+    if {$::params::params(dev) ne {}} {
+	::evdev::touch $::params::params(dev) [list ::touch::evdev-handler $w]
     }
 }

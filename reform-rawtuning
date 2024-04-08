@@ -2,8 +2,8 @@
 
 lappend auto_path .
 
-package require ::midi
-package require ::rawtuning
+package require midi
+package require rawtuning
 
 # set dict [::rawtuning::get-dict 10 stick]
 # set dict [::rawtuning::get-dict 8 stick]

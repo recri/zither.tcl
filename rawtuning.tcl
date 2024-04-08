@@ -27,9 +27,9 @@
 # various conventions for guitar tunings, upper case for octave 2 notes,
 # lower case for octave 3, lower case' for octave 4.  standard EADgbe'
 
-package provide ::rawtuning 1.0
+package provide rawtuning 1.0
 
-package require ::midi
+package require midi
 
 namespace eval ::rawtuning {
     set flat {♭}
@@ -189,6 +189,8 @@ namespace eval ::rawtuning {
 		    D D-G-C-F-A-D
 		}
 	    }
+	    half-stick-1 {B3 E3 A2 D2 G1 C1}
+	    half-stick-2 {B1 E2 A2 D3 G3 C4}
 	}
 
 	7 {

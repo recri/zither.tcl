@@ -17,7 +17,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 # 
 
-package provide ::params 1.0
+package provide params 1.0
 
 # /dev/input/mouse0 - synaptics touchpad as mouse
 # /dev/input/mouse1 - track point as mouse
@@ -26,36 +26,40 @@ package provide ::params 1.0
 # /dev/input/event8 - touch screen on rpi41 with no usb keyboard
 # /dev/input/event10 - touch screen on rpi41 with usb keyboard plugged in
 
+# preset stick-10-1 strings 10 root E3 tuning {0 -7 -7 -7 -7 16 5 5 5 5}
+# preset bass-guitar-6-high strings 6 root E1 tuning {0 5 5 5 5 5}
+
 namespace eval ::params {
-    set ::params::width 800
-    set ::params::height 480
-    array set ::params::defaults {
+    # params of program interest
+    array set ::params::params {
+	mouse 0
+	touch 1
+	dev /dev/input/event5
+	fullscreen 1
+	width 800
+	height 480
 	orientation 180
+    }
+    # params of muscial interest
+    array set ::params::defaults {
 	tonic C
 	mode Ionian
 	nut 0
-	frets 17
-	preset stick-10-1
-	strings 10 root E3 tuning {0 -7 -7 -7 -7 16 5 5 5 5}
-	sound guitar
+	frets 24
+	preset bass-guitar-4  strings 4 root E1 tuning {0  5 5 5}
+	sound bass
     }
-    proc ::params::x {x} { set x }
-    proc ::params::y {y} { set y }
     switch $::tcl_platform(machine) {
 	x86_64 { 
 	    # /dev/input/event4 
-	    set ::params::mouse 1
-	    set ::params::touch 0
-	    set ::params::dev {}
-	    set ::params::fullscreen 0
-	    #set ::params::width 1600
-	    #set ::params::height 960
+	    array set ::params::params {
+		mouse 1
+		touch 0
+		dev {}
+		fullscreen 0
+	    }
 	}
 	aarch64 { 
-	    set ::params::mouse 0
-	    set ::params::touch 1
-	    set ::params::dev /dev/input/event11
-	    set ::params::fullscreen 1
 	}
 	default { error "unknown machine $::tcl_platform(machine) in params.tcl }
     }

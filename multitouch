@@ -21,22 +21,6 @@
 
 lappend auto_path . ../keyer/lib
 
-package require ::params
-package require ::window
-package require sound
-package require touch
+package require window
 
-
-touch::init .c
 ::window::main {}
-.c configure -width $::params::width -height $::params::height -bg black -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0
-
-#
-# this appears to have some timing issues
-#
-after 1 {
-    if {$::params::fullscreen} {
-	wm attributes . -fullscreen $::params::fullscreen
-	# puts [winfo geometry .]
-    }
-}
