@@ -1,8 +1,319 @@
-* Touch appears to produce data on /dev/input/event8
+* Zither notes.
+** Instrument description
+   The tuning/preset data that I've accumulated is pretty daunting in volume.
+   I keep wanting to try a John Fahey tablature in an open-D tuning, but digging
+   through the data to find it is 
+*** 12 string guitar and mandolin should group the doubled strings under a single button
+*** zither needs to group the strings into fretted, accompaniment, bass, and contrabass
+*** lyre is not fretted, nor are other harps
+*** autoharp is not fretted, but it has muting
+*** 5 string banjo fifth string frets start at the fifth fret of the main strings.
+*** Split voices, run different synths on melody and bass.
+	run different voices on each string, or segments of strings
+*** Retune the nut differently for melody and bass.
+*** Split the fretboard, let the left hand finger the bass while
+    the right hand fingers the melody.
+** Device control
+   So the fretboard is the playing surface, but how do we configure the device.
+*** One way to switch to control mode on a phone is to turn it upside down so
+    you can look at it.  But phones and tablets simply rotate the display and
+    pretend nothing happened.  Maybe if we access the accelerometer directly.
+** Implementation problems
+*** with the low precision touch on the Pi Foundation display, I get crackling
+    when two fingers get to just the right distance.  G on first string B on
+    next string does it pretty regularly.
+*** Also close fingers merge, which means you can do two finger vibrato by tapping
+    a second finger next to a finger already sounding.
+*** The earphone cable gets tangled with everything else hanging down.
+** Mounting a phone or tablet
+*** Hanging around the neck doesn't work.  Aside from the strangling 
+   possibilities, it's a tight fit when the screen hangs high enough.
+*** Graumont (Encycl. of Knots and Fancy Ropework) has designs for knotted
+    cigarette cases which could easily adapt to a hanging cell phone case.
+*** But they have no window to expose the screen, the secure mount will have
+    a TPU phone case firmly attached to the baldric.
+*** The chapman straps pin one pivot at belt ieight with the belt hook,
+   then adjusts the angle with the shoulder strap.
+   Distance from shoulder to belt is 20-24 inches.
+*** Found two stickists with modified guitar straps for hanging their
+   sticks from a single shoulder strap.  The belt clip goes over a
+   strap hung between the two ends of the shoulder straps.  The upper
+   attachment is attached to a secondary strap coming from the shoulder
+   strap.
+*** Warr guitars just use a guitar strap, perhaps the weight of the body
+    helps to balance them,
+*** Several users construct floor stands which hold the stick at the right
+    height and angle for play.
+*** The chapman stick mount is a very nice way to mount a phone, 
+   or two phones, or a narrow touch screen, on an actual stick to place the
+   tapping screen chest high where both hands can reach comfortably.
+*** So we put a baldric over the right or left shoulder
+    and attach a phone case or tablet case to the baldric, delegating the
+    responsibility for gripping the phone to the phone case, then attaching
+    the case to the baldric with MOLLE or velcro.
+*** Baldric only needs width over shoulder and where phone is mounted
+**** Trust friction to keep it from sliding around the body?
+**** Add a weighted payload to the low point to stabilize the baldric.
+*** Bling cell phone mounts
+** Fretboard layout
+** Fretboard decoration
+*** The existing, which labels each note chromatically,
+    emphasizes the tonic of the scale, and deemphasizes
+    the accidentals of the scale.
+*** allow the key to be specified for note-to-name 
+    so it knows to switch between # and b enharmonics.
+*** Piano, scale in white, accidentals in black.
+*** Dulcimer, fretted diatonically, accidentals can't be played.
+** Data organization
+** Playing dynamics
+*** customize behavior when one string is touched at more than one point
+    currently playing all of them, but could suppress the upstream touches
+** Programming details - Tcl/Tk/Linux/Raspberry Pi
+*** Touch appears to produce data on /dev/input/event8
   That's on the rpi4 with pi foundation touchscreen
   But only if you don't plug in a usb input device
-* The touch pad on my laptop doesn't seem to produce
+*** The touch pad on my laptop doesn't seem to produce
   any touch events, but I may need to recheck that.
-* Use lsinput from input-utils to identify the 
+  No the touch pad produces a lot of touch events, but
+  none of them are registered to the screen or window
+*** Use lsinput from input-utils to identify the 
   files in /dev/input/*
+** Programming details - Js/Wasm/Progressive Web App
+** Isomorphic keyboards
+	https://en.wikipedia.org/wiki/Isomorphic_keyboard
+*** Chromatic button accordion
+	https://en.wikipedia.org/wiki/Chromatic_button_accordion
+*** Harpejji
+	https://en.wikipedia.org/wiki/Harpejji
+*** Starrboard
+	https://en.wikipedia.org/wiki/StarrBoard
+*** Chapman Stick
+	https://en.wikipedia.org/wiki/Chapman_Stick
+	5 bass strings in fifths from center up
+	5 melody strings in fourths from center up
+	C above 5 string bass B to D below guitar high D
+*** Jankó - piano
+	https://en.wikipedia.org/wiki/Jank%C3%B3_keyboard
+*** Wicki-Hayden - bandoneon and concertina
+	https://en.wikipedia.org/wiki/Wicki%E2%80%93Hayden_note_layout
+*** Muto -
+*** Array Mbira -
+	https://en.wikipedia.org/wiki/Array_mbira
+*** Dodeka keyboard
+	https://en.wikipedia.org/wiki/Dodeka_keyboard
+*** Harmonic table
+	https://en.wikipedia.org/wiki/Harmonic_table_note_layout
+*** Lumatone
+	https://www.lumatone.io/
+*** Musix Pro already does this, for Mac users.
+	That is, they provide a variety of isomorphic keyboards
+	in a variety of presentations and let you noodle about.
+*** Oh, the Chapman Stick is a six string bass, tuned in fifths, from
+ high down to low, and a six string guitar, tuned in fourths, from
+ low to high, so 12 strings, or 10 strings by dropping a pair of
+ strings, or you could do a 10 string with 4 bass and 6 melody
+ strings.
+**** Looking at stickman.com videos, one holds the stick like a cello
+   with a cross brace resting on his lap, the head of the stick over
+   his left shoulder.
+** Hardware
+*** There is a 8.8 inch touchscreen, 1360x480 pixels, hdmi + usb
+  for $75 at amazon, suddenly makes a lot of sense.
+  Don't believe that screen is really 10 point touch, as all the
+  look alike screens specify 5 point touch.
+*** Found an 8 inch 10 point touch screen on AliExpress for $30.
+  A little thin on the description  (resolution? interface?)
+  but it will probably do, and $30 isn't much to venture.  I suspect
+  it's a DSI interface for the screen and obviously USB for touch and
+  power. 
+*** This 8 inch screen is approximately an iPad Mini size and I think
+  that will be a favored size, but we'll see.  The plan is to make
+  a board mount for it, and for this RPi 7.7 inch display, too.
+** Chapman stick dimensions
+   Note that most of the length is to accomodate the string length
+   required to get the desired tuning, and the scale length is there
+   to accomodate the fret lengths required to get the desired range.
+   Scale length is 2 * (distance from nut to the octave fret)
+*** SPECIFICATIONS for 10-string Stick, all tunings
+**** Dimensions 45 1/4" (115cm) x 3 1/4" (8.3cm) x 1 3/4" (4.5cm)
+**** Neck thickness 7/8" (2.2cm), scale length 36" (91.5cm)
+**** String spacing .320" (8.13mm), Group spacing .430" (10.92mm)
+**** Average weight Average weight 7.0 lbs (3.17kg)
+*** SPECIFICATIONS for 12-String Grand Stick®, all tunings:
+**** Dimensions 46 1/4" (117.5cm) x 3 3/4" (9.5cm) x 1 3/4" (4.5cm)
+**** Neck thickness 7/8" (2.2cm), scale length 36" (91.5cm)
+**** String spacing .305" (7.62mm), Group spacing .400" (9.14mm)
+**** Average weight 7.6 lbs (3.45kg)(weight depends on material and pickups)
+*** SPECIFICATIONS for 10-string Railboard®, all tunings:
+**** Dimensions 45 3/8" (115.25cm) x 3 1/2" (8.9cm)
+**** Neck thickness 3/4" (1.9cm), scale length 34" (86.3cm)
+**** String spacing .340" (8.64mm), Group spacing .470" (11.94mm)
+**** Weight 8.5 lbs (3.86kg)
+*** SPECIFICATIONS for 12-string Grand Railboard®, all tunings:
+**** Dimensions 45 3/4" (116.20cm) x 3 3/4" (9.5cm)
+**** Neck thickness 3/4" (1.9cm), scale length 34" (86.3cm)
+**** String spacing .305" (7.62mm), Group spacing .400" (9.14mm)
+**** Weight 9.3 lbs (4.22kg)
+*** SPECIFICATIONS for 10-string Alto Railboard®, all tunings:
+**** Dimensions 36 3/8" (92.4cm) x 3 1/2" (8.9cm)
+**** Neck thickness 3/4" (1.9cm), scale length 25 1/2" (64.8cm)
+**** String spacing .340" (8.64mm), Group spacing .470" (11.94mm)
+**** Weight 7 lbs (3.17kg)
+*** SPECIFICATIONS for Ten String Grand™, all tunings:
+**** Dimensions 46 1/4" (117.5cm) x 3 3/4" (9.5cm) x 1 3/4" (4.5cm)
+**** Neck thickness 7/8" (2.2cm),
+**** scale length 36" (91.5cm)
+**** String spacing .350" (8.9mm),
+**** Group spacing .500" (12.7mm)
+**** Average weight 7.6 lbs (3.45kg)
+*** SPECIFICATIONS for 8-String NS/Stick™, all tunings:
+**** Dimensions 40" (101.6cm) x 10 1/2" wide body (26.67cm) x 7/8" neck (2.2cm)
+**** Scale length 34" (86.4cm)
+**** String spacing at bridge 4 melody strings .450" (11.43mm), 4 bass strings .590" (14.98mm),
+**** Group spacing .590" (14.98mm)
+**** String spacing at nut .310" (7.87mm)
+**** Neck width 3 5/8" (9.2cm) at 24th fret and 2 1/2" (6.35cm) at nut
+**** Weight 8.0 lbs (3.63kg)
+*** SPECIFICATIONS for 10-String Alto Stick™, all tunings:
+**** Dimensions 36 1/4" (92.1cm) x 3 1/4" (8.3cm) x 1 3/4" (4.5cm)
+**** Neck thickness 7/8" (2.2cm), scale length 26 1/2" (67.3cm)
+**** String spacing .320" (8.13mm), Group spacing .430" (10.92mm)
+**** Average weight 5.6 lbs (2.54kg) (weight depends on material and pickups)
+*** SPECIFICATIONS for 8-string Stick Bass®, all tunings:
+**** Dimensions 45 1/4" (115cm) x 3 1/4" (8.3cm) x 1 3/4" (4.5cm)
+**** Neck thickness 7/8" (2.2cm), scale length 36" (91.5cm)
+**** String spacing .410" (10.41mm)
+**** Average weight 7.0 lbs (3.17kg), (weight depends on material and pickups)
+*** SPECIFICATIONS for 12-string Stick Guitar®, all tunings:
+**** Dimensions 37 1/4" (94.6cm) x 3 3/4" (9.5cm) x 1 3/4" (4.5cm)
+**** Neck thickness 7/8" (2.2cm), scale length 26 1/2" (67.3cm)
+**** String spacing .300" (7.62mm), Group spacing .380" (9.14mm)
+**** Average weight 7.6 lbs (2.72kg)
+** Table of stick dimensions
+|---------+-----------------+--------+-------+-------+-------+-------+-------+-------+--------|
+| Strings | Model           | Length | width | thick |  neck |   sep | group | scale | weight |
+|---------+-----------------+--------+-------+-------+-------+-------+-------+-------+--------|
+|      10 | stick           | 45.250 | 3.250 |  1.75 | 0.875 | 0.320 | 0.430 |  36.0 |    7.0 |
+|      12 | grand stick     | 46.250 | 3.750 |  1.75 | 0.875 | 0.305 | 0.400 |  36.0 |    7.6 |
+|      10 | railboard       | 45.375 | 3.500 |       | 0.750 | 0.340 | 0.470 |  34.0 |    8.5 |
+|      12 | grand railboard | 45.750 | 3.750 |       | 0.750 | 0.305 | 0.400 |  34.0 |    9.3 |
+|      10 | alto railboard  | 36.380 | 3.500 |       | 0.750 | 0.340 | 0.470 |  25.5 |    7.0 |
+|      10 | grand           | 46.250 | 3.750 |  1.75 | 0.875 | 0.350 | 0.500 |  36.0 |    7.6 |
+|       8 | NS/Stick        | 40.000 | 3.625 |       | 0.875 | 0.450 | 0.590 |  34.0 |    8.0 |
+|      10 | Alto Stick      | 36.250 | 3.250 |  1.75 | 0.875 | 0.320 | 0.430 |  26.5 |    5.6 |
+|       8 | Stick Bass      | 45.250 | 3.250 |  1.75 | 0.875 | 0.410 |       |  36.0 |    7.0 |
+|      12 | Stick Guitar    | 37.250 | 3.750 |  1.75 | 0.875 | 0.300 | 0.380 |  36.0 |    7.6 |
+|---------+-----------------+--------+-------+-------+-------+-------+-------+-------+--------|
+** Table of phone, tablet, and screen dimensions
+*** Phone and tablet specifications
+|-------------------+--------+-------+---------+------------+---------+----------+------------+------------+-----------|
+| phone             | height | width | width/4 |    width/6 | width/8 | width/10 |   width/12 |  height/13 |      diag |
+|-------------------+--------+-------+---------+------------+---------+----------+------------+------------+-----------|
+| pixel 8 pro       |   6.40 |  3.00 |    0.75 |        0.5 |   0.375 |      0.3 |       0.25 | 0.49230769 | 7.0682388 |
+| pixel 8           |   5.90 |  2.80 |     0.7 | 0.46666667 |    0.35 |     0.28 | 0.23333333 | 0.45384615 | 6.5306967 |
+| pixel 7a          |   6.00 |  2.80 |     0.7 | 0.46666667 |    0.35 |     0.28 | 0.23333333 | 0.46153846 | 6.6211781 |
+| iphone 15 pro max |   6.29 |  3.02 |   0.755 | 0.50333333 |  0.3775 |    0.302 | 0.25166667 | 0.48384615 | 6.9774279 |
+| iphone 15 pro     |   5.77 |  2.78 |   0.695 | 0.46333333 |  0.3475 |    0.278 | 0.23166667 | 0.44384615 | 6.4047873 |
+| iphone 15         |   5.80 |  2.82 |   0.705 |       0.47 |  0.3525 |    0.282 |      0.235 | 0.44615385 | 6.4492170 |
+| S24 Ultra         |   6.39 |  3.11 |  0.7775 | 0.51833333 | 0.38875 |    0.311 | 0.25916667 | 0.49153846 | 7.1066307 |
+| OnePlus 12        |   6.50 |  3.00 |    0.75 |        0.5 |   0.375 |      0.3 |       0.25 |        0.5 | 7.1589105 |
+| OnePlus 12R       |   6.43 |  2.96 |    0.74 | 0.49333333 |    0.37 |    0.296 | 0.24666667 | 0.49461538 | 7.0785945 |
+| ipad pro 12.9     |  11.04 |  8.46 |   2.115 |       1.41 |  1.0575 |    0.846 |      0.705 | 0.84923077 | 13.908745 |
+| ipad pro 11       |   9.74 |  7.02 |   1.755 |       1.17 |  0.8775 |    0.702 |      0.585 | 0.74923077 | 12.006165 |
+| ipad air          |   9.74 |  7.02 |   1.755 |       1.17 |  0.8775 |    0.702 |      0.585 | 0.74923077 | 12.006165 |
+| ipad              |   9.79 |  7.07 |  1.7675 |  1.1783333 | 0.88375 |    0.707 | 0.58916667 | 0.75307692 | 12.075968 |
+| ipad mini         |   7.69 |  5.30 |   1.325 | 0.88333333 |  0.6625 |     0.53 | 0.44166667 | 0.59153846 | 9.3394914 |
+| 8 inch 16x9       |   6.97 |  3.92 |    0.98 | 0.65333333 |    0.49 |    0.392 | 0.32666667 | 0.53615385 | 7.9967056 |
+| 10 inch 16x9      |   8.72 |   4.9 |   1.225 | 0.81666667 |  0.6125 |     0.49 | 0.40833333 | 0.67076923 | 10.002420 |
+#+TBLFM: $4=$3/4::$5=$3/6::$6=$3/8::$7=$3/10::$8=$3/12::$9=$2/13::$10=sqrt($2*$2+$3*$3)
+*** The take away from those specifications are that
+**** A phone based instrument at 8 or 10 strings is well within the stick envelope on string spacing
+**** An even tighter spacing might work, because the capacitive sensing is winner take all, suppressing 
+   the neighboring positions.
+** The overall strategy for making money on the project
+*** Give away the software.
+*** Sell the rig to mount the user's phone or tablet to play.
+**** Doesn't need the tensile bracing that the stick or guitars require.
+**** Doesn't need the length to stretch strings.
+**** Does need position cues for hands, since the screen has neither strings nor frets.
+**** Does need RF screening for the body side of the phoned
+*** Sell accessories that 
+*** The strategy with respect to knock-offs is to give them too many opportunities
+   to copy, leave them dazzled with too many possibilities to function effectively.
+*** The case should provide a dock
+*** for power in, via battery or external charger
+*** for audio out to a stereo jack
+*** and HID in to control, a rotary encoder with push switch should do.
+*** for audio in when we enable the breath control and mouthpieces
+*** for usb hid providing air pressure 
+** Scale length is roughly the distance from nut to bridge
+   (The roughness comes from details of bridge placement, which depends on the
+   mechanical details of the bridge)
+*** scale length of a guitarish instrument is 2 * (length from nut to octave fret).
+*** so 1/2 scale length is the distance from nut to first octave fret.
+*** and 3/4 scale length is the distance from nut to second octave fret.
+*** and 7/8 scale length is the distance from nute to third octave fret, but no
+    guitar has a third octave fret.
+| fret | 24 fret |
+| 0.35 |     8.4 |
+| 0.40 |     9.6 |
+| 0.45 |    10.8 |
+| 0.50 |     12. |
+#+TBLFM: $2=$1*24
+*** Luthier web site (stemac.com) gave me this table for 24 frets on a 24" scale
+  length.  I'm guessing that if I computed the wavelength for the freqencies
+  of the chromatic scale, using the midi-to-frequency formula, that the unfretted
+  string lengths would be proportional to the wavelengths.
+  Bonus bridge location tweaking information.
+ 24.000" fret scale
+|------+----------+--------------+---------|
+| fret | from nut | fret to fret |         |
+|------+----------+--------------+---------|
+|    1 | 1.347"   | 1.347"       | (nut-1) |
+|    2 | 2.618"   | 1.271"       | (1-2)   |
+|    3 | 3.818"   | 1.200"       | (2-3)   |
+|    4 | 4.951"   | 1.133"       | (3-4)   |
+|    5 | 6.020"   | 1.069"       | (4-5)   |
+|    6 | 7.029"   | 1.009"       | (5-6)   |
+|    7 | 7.982"   | 0.952"       | (6-7)   |
+|    8 | 8.881"   | 0.899"       | (7-8)   |
+|    9 | 9.730"   | 0.849"       | (8-9)   |
+|   10 | 10.530"  | 0.801"       | (9-10)  |
+|   11 | 11.286"  | 0.756"       | (10-11) |
+|  *12 | 12.000"  | 0.714"       | (11-12) |
+|   13 | 12.674"  | 0.674"       | (12-13) |
+|   14 | 13.309"  | 0.636"       | (13-14) |
+|   15 | 13.909"  | 0.600"       | (14-15) |
+|   16 | 14.476"  | 0.566"       | (15-16) |
+|   17 | 15.010"  | 0.535"       | (16-17) |
+|   18 | 15.515"  | 0.505"       | (17-18) |
+|   19 | 15.991"  | 0.476"       | (18-19) |
+|   20 | 16.440"  | 0.450"       | (19-20) |
+|   21 | 16.865"  | 0.424"       | (20-21) |
+|   22 | 17.265"  | 0.400"       | (21-22) |
+|   23 | 17.643"  | 0.378"       | (22-23) |
+|  *24 | 18.000"  | 0.357"       | (23-24) |
+|------+----------+--------------+---------|
+*Frets that are red are "octaves".
 
+Bridge placement for 24.000" scale length
+Bridge placement illustration
+
+Distance indicated is from the fretboard edge of the nut to center of forward-most mounting screw or pivot post.
+
+Telecaster® style bridges 24.235"(± 0.030")
+Stratocaster® style bridges
+Non-tremolo bridge 23.765"(± 0.030")
+Vintage-style Tremolo 23.765"
+Floyd Rose® locking tremolos
+Floyd Rose Original 23.529"
+Floyd Rose II & Schaller Floyd Rose 23.471"
+Tune-o-matic style bridges 24.059" from nut to center of treble-side post. Mount bass-side post 1/16"-1/8" further from the nut.   
+Combo Bridge/Tailpieces 24.059"
+Other
+Schaller Non-Tremolo Roller Bridge 24.793"
+Hipshot Hardtail Bridge 24.588"
+Top-Loading Style Hardtail Bridge 24.706"
+** Miscellany
+*** redo with different sides up, rotate text to match
+*** make the control panel into another canvas, just swap them.
