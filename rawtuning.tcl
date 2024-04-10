@@ -59,7 +59,7 @@ namespace eval ::rawtuning {
 	comment {}
 	ignore false
     }]
-    set tunings [dict create {*}{
+    set instruments [dict create {*}{
 	banjo {
 	    4  {
 		plectrum {C3 G3 B3 D4}
@@ -390,12 +390,13 @@ namespace eval ::rawtuning {
     }]
 }
 
-proc ::rawtuning::keys-dict {} {dict keys $::rawtuning::tunings}
-proc ::rawtuning::get-dict {args} {dict get $::rawtuning::tunings {*}$args}
+proc ::rawtuning::keys-dict {} {dict keys $::rawtuning::instruments}
+proc ::rawtuning::get-dict {args} {dict get $::rawtuning::instruments {*}$args}
 
+# merge the instrument name with the number of strings
 proc ::rawtuning::get-instruments {} {
     set inst {}
-    foreach i [dict keys $rawtuning::tunings] {
+    foreach i [dict keys $rawtuning::instruments] {
 	set strings {}
 	foreach s [dict keys [dict get $rawtuning::tunings $i]] {
 	    if {[string is integer $s] || [regexp {\d+/\d+} $s]} {
@@ -411,24 +412,28 @@ proc ::rawtuning::get-instruments {} {
     return $inst
 }
 
+# get the specified instrument/number of strings as a dictionary
+# with informational fields filled from defaults
+# and tunings grouped into a tunings dictionary
 proc ::rawtuning::get-instrument {inst} {
-    set instrument $rawtuning::defaults
-    dict for {key val} [dict get $rawtuning::tunings {*}$inst] {
-	if {[dict exists $instrument $key]} {
-	    dict set instrument $key $val; # override default value
+    set instdict $rawtuning::defaults
+    dict set instdict name $inst
+    dict for {key val} [dict get $rawtuning::instruments {*}$inst] {
+	if {[dict exists $instdict $key]} {
+	    dict set instdict $key $val
 	} else {
-	    dict set instrument tuning $key $val
+	    dict set instdict tunings $key $val
 	}
     }
-    return $instrument
+    return $instdict
 }
 
-proc ::rawtuning::get-tunings {inst} {
-    dict keys [dict get {*}$inst tunings]
+proc ::rawtuning::get-tunings {instdict} {
+    dict keys [dict get $instdict tunings]
 }
 
-proc ::rawtuning::get-tuning {inst tuning} {
-    dict get [dict get {*}$inst tunings] $tuning
+proc ::rawtuning::get-tuning {instdict tuning} {
+    dict get $instdict tunings $tuning
 }   
 
 # munich zither fretted a a d g c (a == 440)
@@ -473,9 +478,12 @@ proc ::rawtuning::to-preset {key value} {
     return [list strings $strings root $root intervals $intervals stringnotes $stringnotes]
 }
 
-if {1} {
-    foreach i [::rawtuning::instruments] {
-	dict for {key val} [dict get [::rawtuning::instrument $i] tuning] {
+if {0} {
+    foreach i [::rawtuning::get-instruments] {
+	set instdict [::rawtuning::get-instrument $i]
+	puts "$i -> $instdict"
+	foreach key [::rawtuning::get-tunings $instdict] {
+	    set val [::rawtuning::get-tuning $instdict $key]
 	    if {[catch {::rawtuning::to-preset $key $val} preset]} {
 		error "error processing $key $val:\n$errorInfo"
 	    }
