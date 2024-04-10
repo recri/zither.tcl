@@ -41,11 +41,11 @@
 # pretty much sets that.
 #
 
-package provide rawtuning 1.0
+package provide instrument 1.0
 
 package require midi
 
-namespace eval ::rawtuning {
+namespace eval ::instrument {
     set flat {♭}
     set sharp {♯}
     set dash {–}
@@ -156,43 +156,37 @@ namespace eval ::rawtuning {
 	    }
 	}
 	hammered-dulcimer {
+	    frets none
+	    strings hammered-dulcimer
+	    ignore true
 	    comment {https://www.jamesjonesinstruments.com/hammered-dulcimer-tunings}
 	    13/12 {
-		frets none
-		strings hammered-dulcimer
-		ignore true
-		std {G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C5 D5
+		standard {G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C5 D5
 		    C#4 D4 E4 F#4 G4 A4 B4 C5 D5 E5 F5 G5 A5
 		    G#4 A4 B4 C#5 D5 E5 F#5 G5 A5 B5 C6 D6 E6}
 	    }
 	    12/11 {
-		frets none
-		strings hammered-dulcimer
-		ignore true
-		std {G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C5
+		standard {G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C5
 		    C#4 D4 E4 F#4 G4 A4 B4 C5 D5 E5 F5 G5
 		    G#4 A4 B4 C#5 D5 E5 F#5 G5 A5 B5 C6 D6}
 	    }
 	    15/14 {
-		frets none
-		strings hammered-dulcimer
-		ignore true
-		std {D3 E3 F#3 G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C5
+		standard {D3 E3 F#3 G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C5
 		    G#3 A3 B3 C#4 D4 E4 F#4 G4 A4 B4 C5 D5 E5 F5 G5
 		    D#4 E4 F#4 G#4 A4 B4 C#5 D5 E5 F#5 G5 A5 B5 C6 D6}
 	    }
 	    16/15 {
-		frets none
-		strings hammered-dulcimer
-		ignore true
-		std {D3 E3 F#3 G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C#5 D#5
+		standard {D3 E3 F#3 G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C#5 D#5
 		    G#3 A3 B3 C#4 D4 E4 F#4 G4 A4 B4 C5 D5 E5 F5 G#5 A#5
 		    D#4 E4 F#4 G#4 A4 B4 C#5 D5 E5 F#5 G5 A5 B5 C6 D6 E6}
 	    }
 	}
 	harp {
+	    frets none
+	    strings harp
+	    ignore true
 	    23 {
-		std {
+		standard {
 		    B3 
 		    C4 D4 E4 F4 G4 A4 B4 
 		    C5 D5 E5 F5 G5 A5 B5 
@@ -201,7 +195,7 @@ namespace eval ::rawtuning {
 		}
 	    }
 	    30 {
-		std {
+		standard {
 		                G2 A2 B2 
 		    C3 D3 E3 F3 G3 A3 B3 
 		    C4 D4 E4 F4 G4 A4 B4 
@@ -210,7 +204,7 @@ namespace eval ::rawtuning {
 		}
 	    }
 	    32 {
-		std {
+		standard {
 		                G2 A2 B2 
 		    C3 D3 E3 F3 G3 A3 B3 
 		    C4 D4 E4 F4 G4 A4 B4 
@@ -220,7 +214,7 @@ namespace eval ::rawtuning {
 		}
 	    }
 	    36 {
-		std {
+		standard {
 		    C2 D2 E2 F2 G2 A2 B2 
 		    C3 D3 E3 F3 G3 A3 B3 
 		    C4 D4 E4 F4 G4 A4 B4 
@@ -231,14 +225,13 @@ namespace eval ::rawtuning {
 	    }
 	}
 	lyre {
+	    frets none
+	    strings harp
+	    ignore true
 	    7 {
-		frets none
-		ignore true
 		standard {D4 E4 G4 A4 B4 D5 E5}
 	    }
 	    16 {
-		frets none
-		ignore true
 		standard {G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 F5 G5 A5}
 	    }
 	}
@@ -259,30 +252,32 @@ namespace eval ::rawtuning {
 	}
 	stick {
 	    8 {
-		1 {B0 E1 A1 D2 G2 C3 F3 Bb3}
-		2 {B0 E1 A1 D2 G2 C3 E3 A3}
-		3 {B0 E1 A1 D2 G2 B2 E3 A3}
-		4 {A2 D2 G1 C1 E2 A2 D3 G3}
-		5 {A2 D2 G1 C1 F#2 B2 E3 A3}
+		b4      {B0  E1  A1  D2  G2  C3 F3 Bb3}
+		gi      {B0  E1  A1  D2  G2  C3 E3 A3}
+		glo     {B0  E1  A1  D2  G2  B2 E3 A3}
+		imr     {A2  D2  G1  C1  E2  A2 D3 G3}
+		classic {A2  D2  G1  C1  F#2 B2 E3 A3}
+		idbr    {G#2 C#2 F#1 B0  E1  A1 D2 G2}
 	    }
 	    10 {
-		1 {E3 A2 D2 G1 C1 E2 A2 D3 G3 C4}
-		2 {E3 A2 D2 G1 C1 F#2 B2 E3 A3 D4}
-		3 {E3 A2 D2 G1 C1 C#2 F#2 B2 E3 A3}
-		4 {E3 A2 D2 G1 C1 B1 E2 A2 D3 G3}
-		5 {D3 G2 C2 F1 Bb0 D2 G2 C3 F3 Bb3}
-		6 {F#3 B2 E2 A1 D1 F#2 B2 E3 A3 D4}
-		7 {F#3 B2 E2 A1 D1 C#2 F#2 B2 E3 A3}
-		8 {D#3 G#2 C#2 F#1 B0 E2 A2 D3 G3 C4}
+		mr      {E3  A2  D2  G1  C1  E2  A2  D3 G3 C4}
+		classic {E3  A2  D2  G1  C1  F#2 B2  E3 A3 D4}
+		bm      {E3  A2  D2  G1  C1  C#2 F#2 B2 E3 A3}
+		dbm     {E3  A2  D2  G1  C1  B1  E2  A2 D3 G3}
+		dmr     {D3  G2  C2  F1  Bb0 D2  G2  C3 F3 Bb3}
+		rmr     {F#3 B2  E2  A1  D1  F#2 B2  E3 A3 D4}
+		fb      {F#3 B2  E2  A1  D1  C#2 F#2 B2 E3 A3}
+		dbr     {D#3 G#2 C#2 F#1 B0  E2  A2  D3 G3 C4}
 	    }
 	    12 {
-		1 {B3  E3  A2  D2 G1  C1  B1  E2  A2 D3 G3 C4}
-		2 {B3  E3  A2  D2 G1  C1  C#2 F#2 B2 E3 A3 D4}
-		3 {A3  E3  A2  D2 G1  C1  B1  E2  A2 D3 G3 C4}
-		4 {A3  E3  A2  D2 G1  C1  C#2 F#2 B2 E3 A3 D4}
-		5 {A3  D3  G2  C2 F1  Bb0 A1  D2  G2 C3 F3 Bb3}
-		6 {C#4 F#3 B2  E2 A1  D1  C#2 F#2 B2 E3 A3 D4}
-		7 {A#3 D#3 G#2 C#2 F#1 B0  E1  A1 D2 G2 C3 F3}
+		mr      {B3  E3  A2  D2 G1 C1    B1  E2  A2 D3 G3 C4}
+		classic {B3  E3  A2  D2 G1 C1    C#2 F#2 B2 E3 A3 D4}
+		mrhb4   {A3  E3  A2  D2 G1 C1    B1  E2  A2 D3 G3 C4}
+		chb4    {A3  E3  A2  D2 G1 C1    C#2 F#2 B2 E3 A3 D4}
+		dmr     {A3  D3  G2  C2 F1 Bb0   A1  D2  G2 C3 F3 Bb3}
+		rmr     {C#4 F#3 B2  E2 A1 D1    C#2 F#2 B2 E3 A3 D4}
+		dbr     {Bb3 Eb3 Ab2 C#1 F#1 B1  E1  A1  D2 G2 C3 F3}
+		m4      {F3  C3  G2  D2  A1  E1  B1  E2  A2 D3 G3 C4}
 	    }
 	}
 	ukulele {
@@ -390,15 +385,16 @@ namespace eval ::rawtuning {
     }]
 }
 
-proc ::rawtuning::keys-dict {} {dict keys $::rawtuning::instruments}
-proc ::rawtuning::get-dict {args} {dict get $::rawtuning::instruments {*}$args}
-
 # merge the instrument name with the number of strings
-proc ::rawtuning::get-instruments {} {
+proc ::instrument::get-instruments {} {
     set inst {}
-    foreach i [dict keys $rawtuning::instruments] {
+    foreach i [dict keys $::instrument::instruments] {
+	if {[dict exists $::instrument::instruments {*}$i ignore] &&
+	    [dict get $::instrument::instruments {*}$i ignore]} {
+	    continue
+	}
 	set strings {}
-	foreach s [dict keys [dict get $rawtuning::tunings $i]] {
+	foreach s [dict keys [dict get $::instrument::instruments {*}$i]] {
 	    if {[string is integer $s] || [regexp {\d+/\d+} $s]} {
 		lappend strings $s
 	    }
@@ -415,10 +411,10 @@ proc ::rawtuning::get-instruments {} {
 # get the specified instrument/number of strings as a dictionary
 # with informational fields filled from defaults
 # and tunings grouped into a tunings dictionary
-proc ::rawtuning::get-instrument {inst} {
-    set instdict $rawtuning::defaults
+proc ::instrument::get-instrument {inst} {
+    set instdict $::instrument::defaults
     dict set instdict name $inst
-    dict for {key val} [dict get $rawtuning::instruments {*}$inst] {
+    dict for {key val} [dict get $::instrument::instruments {*}$inst] {
 	if {[dict exists $instdict $key]} {
 	    dict set instdict $key $val
 	} else {
@@ -428,11 +424,11 @@ proc ::rawtuning::get-instrument {inst} {
     return $instdict
 }
 
-proc ::rawtuning::get-tunings {instdict} {
+proc ::instrument::get-tunings {instdict} {
     dict keys [dict get $instdict tunings]
 }
 
-proc ::rawtuning::get-tuning {instdict tuning} {
+proc ::instrument::get-tuning {instdict tuning} {
     dict get $instdict tunings $tuning
 }   
 
@@ -449,42 +445,21 @@ proc ::rawtuning::get-tuning {instdict tuning} {
 # root - the open note of the string closest to the player
 # strings - the number of strings
 #
-proc ::rawtuning::to-preset {key value} {
-    # puts "$key $value" 
+proc ::instrument::expand-tuning {value} {
     set strings [llength $value]
     set root [lindex $value 0]
-    set tuning {}
     set stringnotes [lmap note $value {::midi::name-octave-to-note $note}]
     set intervals [list 0 {*}[lmap n1 [lrange $stringnotes 0 end-1] n2 [lrange $stringnotes 1 end] {expr {$n2-$n1}}]]
-    if {0} {
-	switch -regexp $intervals {
-	    {^0( +4)+$} { set intervals thirds }
-	    {^0( +5)+$} { set intervals fourths }
-	    {^0( +7)+$} { set intervals fifths }
-	    {^0 +0( +7 +0)+$} { set intervals doubled-fifths }
-	}
-    }
-    if {1} {
-	set stringnotes2 {}
-	foreach interval $intervals {
-	    if {$stringnotes2 eq {}} {
-		lappend stringnotes2 [::midi::name-octave-to-note $root]
-	    } else {
-		lappend stringnotes2 [expr {$interval+[lindex $stringnotes2 end]}]
-	    }
-	}
-	foreach n1 $stringnotes n2 $stringnotes2 { if {$n1 ne $n2} { error "mismatch between $stringnotes and $stringnotes2" } }
-    }
-    return [list strings $strings root $root intervals $intervals stringnotes $stringnotes]
+    return [list strings $strings root $root stringnotes $stringnotes]
 }
 
 if {0} {
-    foreach i [::rawtuning::get-instruments] {
-	set instdict [::rawtuning::get-instrument $i]
+    foreach i [::instrument::get-instruments] {
+	set instdict [::instrument::get-instrument $i]
 	puts "$i -> $instdict"
-	foreach key [::rawtuning::get-tunings $instdict] {
-	    set val [::rawtuning::get-tuning $instdict $key]
-	    if {[catch {::rawtuning::to-preset $key $val} preset]} {
+	foreach key [::instrument::get-tunings $instdict] {
+	    set val [::instrument::get-tuning $instdict $key]
+	    if {[catch {::instrument::to-preset $key $val} preset]} {
 		error "error processing $key $val:\n$errorInfo"
 	    }
 	    puts "$i $key {$val}-> $preset"

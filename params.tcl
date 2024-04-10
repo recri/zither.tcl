@@ -41,12 +41,15 @@ namespace eval ::params {
 	orientation 180
     }
     # params of muscial interest
+    # 	preset bass-guitar-4  strings 4 root E1 tuning {0  5 5 5}
+
     array set ::params::defaults {
+	instrument {bass-guitar 4}
+	tuning standard
 	tonic C
 	mode Ionian
 	nut 0
 	frets 24
-	preset bass-guitar-4  strings 4 root E1 tuning {0  5 5 5}
 	sound bass
     }
     switch $::tcl_platform(machine) {
