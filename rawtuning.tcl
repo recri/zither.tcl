@@ -57,6 +57,7 @@ namespace eval ::rawtuning {
 	frets chromatic
 	strings single
 	comment {}
+	ignore false
     }]
     set tunings [dict create {*}{
 	banjo {
@@ -92,10 +93,12 @@ namespace eval ::rawtuning {
 	}
 	bass-viol {
 	    frets continuous
+	    ignore true
 	    standard {E1 A1 D2 G2}
 	}
 	cello {
 	    frets continuous
+	    ignore true
 	    standard {C2 G2 D3 A3}
 	}
 	dulcimer {
@@ -152,13 +155,90 @@ namespace eval ::rawtuning {
 		standard {E1 E2 A1 A2 D2 D3 G2 G3 B3 B3 E4 E4}
 	    }
 	}
+	hammered-dulcimer {
+	    comment {https://www.jamesjonesinstruments.com/hammered-dulcimer-tunings}
+	    13/12 {
+		frets none
+		strings hammered-dulcimer
+		ignore true
+		std {G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C5 D5
+		    C#4 D4 E4 F#4 G4 A4 B4 C5 D5 E5 F5 G5 A5
+		    G#4 A4 B4 C#5 D5 E5 F#5 G5 A5 B5 C6 D6 E6}
+	    }
+	    12/11 {
+		frets none
+		strings hammered-dulcimer
+		ignore true
+		std {G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C5
+		    C#4 D4 E4 F#4 G4 A4 B4 C5 D5 E5 F5 G5
+		    G#4 A4 B4 C#5 D5 E5 F#5 G5 A5 B5 C6 D6}
+	    }
+	    15/14 {
+		frets none
+		strings hammered-dulcimer
+		ignore true
+		std {D3 E3 F#3 G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C5
+		    G#3 A3 B3 C#4 D4 E4 F#4 G4 A4 B4 C5 D5 E5 F5 G5
+		    D#4 E4 F#4 G#4 A4 B4 C#5 D5 E5 F#5 G5 A5 B5 C6 D6}
+	    }
+	    16/15 {
+		frets none
+		strings hammered-dulcimer
+		ignore true
+		std {D3 E3 F#3 G3 A3 B3 C4 D4 E4 F4 G4 A4 A#4 C#5 D#5
+		    G#3 A3 B3 C#4 D4 E4 F#4 G4 A4 B4 C5 D5 E5 F5 G#5 A#5
+		    D#4 E4 F#4 G#4 A4 B4 C#5 D5 E5 F#5 G5 A5 B5 C6 D6 E6}
+	    }
+	}
+	harp {
+	    23 {
+		std {
+		    B3 
+		    C4 D4 E4 F4 G4 A4 B4 
+		    C5 D5 E5 F5 G5 A5 B5 
+		    C6 D6 E6 F6 G6 A6 B6 
+		    C7
+		}
+	    }
+	    30 {
+		std {
+		                G2 A2 B2 
+		    C3 D3 E3 F3 G3 A3 B3 
+		    C4 D4 E4 F4 G4 A4 B4 
+		    C5 D5 E5 F5 G5 A5 B5
+		    C6 D6 E6 F6 G6 A6
+		}
+	    }
+	    32 {
+		std {
+		                G2 A2 B2 
+		    C3 D3 E3 F3 G3 A3 B3 
+		    C4 D4 E4 F4 G4 A4 B4 
+		    C5 D5 E5 F5 G5 A5 B5
+		    C6 D6 E6 F6 G6 A6 B6
+		    C7
+		}
+	    }
+	    36 {
+		std {
+		    C2 D2 E2 F2 G2 A2 B2 
+		    C3 D3 E3 F3 G3 A3 B3 
+		    C4 D4 E4 F4 G4 A4 B4 
+		    C5 D5 E5 F5 G5 A5 B5
+		    C6 D6 E6 F6 G6 A6 B6
+		    C7
+		}
+	    }
+	}
 	lyre {
 	    7 {
 		frets none
+		ignore true
 		standard {D4 E4 G4 A4 B4 D5 E5}
 	    }
 	    16 {
 		frets none
+		ignore true
 		standard {G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 F5 G5 A5}
 	    }
 	}
@@ -173,7 +253,9 @@ namespace eval ::rawtuning {
 	    high-bass    {A3 A3 D4 D4 A4 A4 E5 E5}
 	    cross-tuning {A3 A3 E4 E4 A4 A4 E5 E5}
 	    open-A       {A3 A3 E4 E4 A4 A4 C#5 C#5 }
-	    
+	    silver-lake  {A3 A3 E4 E4 A4 A4 D5 D5}
+	    glory-in-the-meeting-house {E3 E3 D4 D4 A4 A4 E5 E5}
+	    get-up-in-the-cool {E3 E3 E4 E4 A4 A4 E5 E5}
 	}
 	stick {
 	    8 {
@@ -221,10 +303,12 @@ namespace eval ::rawtuning {
 	    bass-alt {D1 A1 D2 G2}
 	}
 	viola {
+	    ignore true
 	    frets continuous
 	    standard {C3 G3 D4 A4}
 	}
 	violin {
+	    ignore true
 	    frets continuous
 	    standard     {G3 D4 A4 E5}
 	    cajun        {F3 C4 G4 D5}
@@ -242,26 +326,66 @@ namespace eval ::rawtuning {
 	zither {
 	    frets zither
 	    strings zither
+	    ignore true
+	    15 {
+		G {G4 A4 B4 C5 D5 E5 F#5 G5 A5 B5 C6 D6 E6 F#6 G6}
+	    }
+	    20 {
+		G {B3 C4 D4 E4 F#4 G4 A4 B4 C5 D5 E5 F#5 G5 A5 B5 C6 D6 E6 F#6 G6}
+		D {B3 C#4 D4 E4 F4 G4 A4 B4 C#5 D5 E5 F5 G5 A5 B5 C#6 D6 E6 F6 G6}
+		C {B3 C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 F5 G5 A5 B5 C6 D6 E6 F6 G6}
+	    }
 	    comment {
-		The first five strings are fretted, and you can see the dulcimer there.
+		In the following the first five strings are fretted, and you can see the dulcimer there.
 		The rest of the strings are unfretted.  The first group is 'accompaniment',
 		the second group is 'bass', and the third group is 'contrabass.  The sixth
 		group contains strings that are added to the concert zither to make an alpine
 		zither.
-		I forgot to look, but I expect they are chromatically fretted.
+	    }
+	    29 {
+		munich-basic {
+		    A4 A4 D4 G3 C3 
+		    Eb4 Bb3 F4 C4 G3 D4 A3 E4 B3 F#3 C#4 G#3 
+		    Eb3 Bb2 F3 C3 G2 D3 A2 E3 B2 F#2 C#3 G#2 
+		}
+		viennese-basic {
+		    A4 D4 G4 G3 C3 
+		    Ab4 Eb4 Bb3 F4 C4 G4 D4 A3 E4 B3 F#4 C#4
+		    G#3 Eb2 Bb2 F2 C3 G2 D2 A2 E2 B2 F#2 C#2 
+		}
+	    }		
+	    35 {
+		munich-concert {
+		    A4 A4 D4 G3 C3 
+		    Eb4 Bb3 F4 C4 G3 D4 A3 E4 B3 F#3 C#4 G#3 
+		    Eb3 Bb2 F3 C3 G2 D3 A2 E3 B2 F#2 C#3 G#2 
+		    F2 E2 Eb2 D2 C#2 C2 
+		}
+		viennese-concert {
+		    A4 D4 G4 G3 C3 
+		    Ab4 Eb4 Bb3 F4 C4 G4 D4 A3 E4 B3 F#4 C#4
+		    G#3 Eb2 Bb2 F2 C3 G2 D2 A2 E2 B2 F#2 C#2 
+		    G#2 C2 B1 Bb1 A1 G#1 
+		}
 	    }
 	    38 {
-		viennese {A4 D4 G4 G3 C3 Ab4 Eb4 Bb3 F4 C4 G4 D4 A3 E4 B3 F#4 C#4 G#3 Eb2 Bb2 F2 C3 G2 D2 A2 E2 B2 F#2 C#2 G#2 C2 B1 Bb1 A1 G#1 G1 F#1 F1}
+		viennese-alpine {
+		    A4 D4 G4 G3 C3 
+		    Ab4 Eb4 Bb3 F4 C4 G4 D4 A3 E4 B3 F#4 C#4
+		    G#3 Eb2 Bb2 F2 C3 G2 D2 A2 E2 B2 F#2 C#2 
+		    G#2 C2 B1 Bb1 A1 G#1 
+		    G1 F#1 F1
+		}
 	    }
 	    42 {
-		munich {A4 A4 D4 G3 C3 | Eb4 Bb3 F4 C4 G3 D4 A3 E4 B3 F#3 C#4 G#3 | Eb3 Bb2 F3 C3 G2 D3 A2 E3 B2 F#2 C#3 G#2 | F2 E2 Eb2 D2 C#2 C2 | B1 Bb1 A1 G#1 G1 F#1 F1}
+		munich-alpine {
+		    A4 A4 D4 G3 C3 
+		    Eb4 Bb3 F4 C4 G3 D4 A3 E4 B3 F#3 C#4 G#3 
+		    Eb3 Bb2 F3 C3 G2 D3 A2 E3 B2 F#2 C#3 G#2 
+		    F2 E2 Eb2 D2 C#2 C2 
+		    B1 Bb1 A1 G#1 G1 F#1 F1
+		}
 	    }
-	}
-	15/14-hammered-dulcimer {
-	    frets none
-	    strings hammered-dulcimer
-	    comment { this tuning is in semi-tone intervalsis complicated, go look it up }
-	    standard {0 2 4 5 7 9 10 12 14 15 17 19 20 22 | 6 7 9 11 12 14 16 17 19 21 22 24 26 27 29 | 13 14 16 18 19 21 23 24 26 28 29 31 33 34 36 38}
 	}
     }]
 }
@@ -269,12 +393,12 @@ namespace eval ::rawtuning {
 proc ::rawtuning::keys-dict {} {dict keys $::rawtuning::tunings}
 proc ::rawtuning::get-dict {args} {dict get $::rawtuning::tunings {*}$args}
 
-proc ::rawtuning::instruments {} {
+proc ::rawtuning::get-instruments {} {
     set inst {}
     foreach i [dict keys $rawtuning::tunings] {
 	set strings {}
 	foreach s [dict keys [dict get $rawtuning::tunings $i]] {
-	    if {[string is integer $s] && [string is list [dict get $rawtuning::tunings $i $s]]} {
+	    if {[string is integer $s] || [regexp {\d+/\d+} $s]} {
 		lappend strings $s
 	    }
 	}
@@ -287,7 +411,7 @@ proc ::rawtuning::instruments {} {
     return $inst
 }
 
-proc ::rawtuning::instrument {inst} {
+proc ::rawtuning::get-instrument {inst} {
     set instrument $rawtuning::defaults
     dict for {key val} [dict get $rawtuning::tunings {*}$inst] {
 	if {[dict exists $instrument $key]} {
@@ -299,11 +423,13 @@ proc ::rawtuning::instrument {inst} {
     return $instrument
 }
 
-if {1} {
-    foreach i [::rawtuning::instruments] {
-	puts "$i -> [::rawtuning::instrument $i]"
-    }
+proc ::rawtuning::get-tunings {inst} {
+    dict keys [dict get {*}$inst tunings]
 }
+
+proc ::rawtuning::get-tuning {inst tuning} {
+    dict get [dict get {*}$inst tunings] $tuning
+}   
 
 # munich zither fretted a a d g c (a == 440)
 # accompaniment eb bb f c g d a e b f# c# g#
@@ -323,33 +449,39 @@ proc ::rawtuning::to-preset {key value} {
     set strings [llength $value]
     set root [lindex $value 0]
     set tuning {}
-    set notes [lmap note $value {::midi::name-octave-to-note $note}]
-    for {set i 0} {$i < $strings} {incr i} {
-	if {$i == 0} { 
-	    set interval 0
-	} else {
-	    set interval [expr {[lindex $notes $i]-[lindex $notes $i-1]}]
-	}
-	lappend tuning $interval
-    }
+    set stringnotes [lmap note $value {::midi::name-octave-to-note $note}]
+    set intervals [list 0 {*}[lmap n1 [lrange $stringnotes 0 end-1] n2 [lrange $stringnotes 1 end] {expr {$n2-$n1}}]]
     if {0} {
-	switch -regexp $tuning {
-	    {^0( +4)+$} { set tuning thirds }
-	    {^0( +5)+$} { set tuning fourths }
-	    {^0( +7)+$} { set tuning fifths }
-	    {^0 +0( +7 +0)+$} { set tuning doubled-fifths }
+	switch -regexp $intervals {
+	    {^0( +4)+$} { set intervals thirds }
+	    {^0( +5)+$} { set intervals fourths }
+	    {^0( +7)+$} { set intervals fifths }
+	    {^0 +0( +7 +0)+$} { set intervals doubled-fifths }
 	}
     }
-    set notes2 {}
-    foreach interval $tuning {
-	if {$notes2 eq {}} {
-	    set note2 $root
-	} else {
-	    set note2 [::midi::note-to-name-octave [expr {$interval+[::midi::name-octave-to-note [lindex $notes2 end]]}]]
+    if {1} {
+	set stringnotes2 {}
+	foreach interval $intervals {
+	    if {$stringnotes2 eq {}} {
+		lappend stringnotes2 [::midi::name-octave-to-note $root]
+	    } else {
+		lappend stringnotes2 [expr {$interval+[lindex $stringnotes2 end]}]
+	    }
 	}
-	lappend notes2 $note2
+	foreach n1 $stringnotes n2 $stringnotes2 { if {$n1 ne $n2} { error "mismatch between $stringnotes and $stringnotes2" } }
     }
-    # foreach n1 $value n2 $notes2 { if {$n1 ne $n2} { error "mismatch between $value and $notes2" } }
-    return "$key { strings $strings root $root tuning {$tuning}}"
+    return [list strings $strings root $root intervals $intervals stringnotes $stringnotes]
 }
+
+if {1} {
+    foreach i [::rawtuning::instruments] {
+	dict for {key val} [dict get [::rawtuning::instrument $i] tuning] {
+	    if {[catch {::rawtuning::to-preset $key $val} preset]} {
+		error "error processing $key $val:\n$errorInfo"
+	    }
+	    puts "$i $key {$val}-> $preset"
+	}
+    }
+}
+
 

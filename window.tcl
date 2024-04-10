@@ -22,6 +22,7 @@ package provide window 1.0
 package require params
 package require touch
 package require midi
+package require rawtuning
 package require presets
 package require evdev
 package require sound
@@ -189,6 +190,17 @@ namespace eval ::window {
 	tcl::mathfunc::max {*}[lmap i $list {string length $i}]
     }
 
+    proc myoptionmenu {w name text values} {
+	variable data
+	labelframe $w.controls.$name
+	set m [tk_optionMenu $w.controls.$name.options data($name) {*}$values]
+	foreach v $values {
+	    $m entryconfigure $v -command [list ::window::adjust $w $name $v]
+	}
+	pack $w.controls.$name.options
+	return $w.controls.$name
+    }
+    
     proc myspinupdate {w name} { ::window::adjust $w $name [$w.controls.$name.spin get] }
     
     proc myspinbox {w name text values} {
@@ -216,6 +228,7 @@ namespace eval ::window {
 	toplevel $w.controls
 	
 	# choices
+	pack [myoptionmenu $w instrument [::rawtuning::get-instruments]] -side top -fill x -expand true
 	pack [myspinbox $w {tonic} {Key} [::midi::get-keys]] -side top -fill x -expand true
 	pack [myspinbox $w {mode} {Mode} [::midi::get-modes]] -side top -fill x -expand true
 	pack [myspinbox $w {nut} {Nut} [range -24 24 1]] -side top -fill x -expand true
