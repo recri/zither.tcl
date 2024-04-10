@@ -181,6 +181,7 @@ namespace eval ::window {
     proc note {action id x y} {
 	variable stringnote
 	foreach {string fret} [window-to-fret $x $y] break
+	# puts "note $action $id $x $y $string $fret"
 	sound::note $action $id [midi::mtof [expr {$stringnote($string)+$fret}]]
     }
 
@@ -228,7 +229,7 @@ namespace eval ::window {
 	pack [button $w.controls.panic -text Panic -foreground red -command {sound::stop}] -side top -fill x -expand true
     }
 
-    proc main {w} {
+    proc main {w args} {
 	variable data
 	#
 	touch::init .c
@@ -256,6 +257,10 @@ namespace eval ::window {
 	    bind $w.c <ButtonPress-1> {::window::note + f %x %y}
 	    bind $w.c <B1-Motion> {::window::note . f %x %y}
 	    bind $w.c <ButtonRelease-1> {::window::note - f %x %y}
+	}
+
+	foreach {key value} $args {
+	    window::adjust $w $key $value
 	}
 
 	if {$::params::params(fullscreen)} {

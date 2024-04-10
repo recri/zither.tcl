@@ -25,17 +25,20 @@ package require params
 package require window
 
 proc main {argc argv} {
+    set opts {}
     foreach {key value} $argv {
 	if {[info exists ::params::params($key)]} {
 	    set ::params::params($key) $value
 	} elseif {[info exists ::params::defaults($key)]} {
-	    set ::params::defaults($key) $value
+	    # set ::params::defaults($key) $value
+	    lappend opts $key $value
 	} else {
 	    puts "invalid option key $key with value $value"
 	    puts "valid option keys are [array get ::params::params] [array get ::params::defaults]"
 	}
     }
-    ::window::main {}
+    ::window::main {} {*}$opts
+
 }
 
 main $argc $argv

@@ -31,10 +31,12 @@ proc ::sound::note {action id freq} {
 	    $command configure -freq $freq -gate 1 -gain 0.25
 	}
 	. { 
-	    #if {[sound::v$id cget -freq] != $freq} { 
-	    #sound::v$id configure -gate 0 
-	    #after 1 [list sound::v$id configure -freq $freq -gate 1 -gain 0.25]
-	    #}
+	    if {[$command cget -freq] != $freq} { 
+		# $command configure -gate 0 
+		# after 1 [list 
+		$command configure -freq $freq -gate 1 -gain 0.25
+		#]
+	    }
 	}
 	- {
 	    $command configure -gate 0

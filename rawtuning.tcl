@@ -45,16 +45,20 @@ package provide rawtuning 1.0
 
 package require midi
 
-# these are the chromatic offsets of the traditional frets
-# repeat to 3rd and 4th above second octave
-set ::rawtuning::ducimer-frets {0 2 4 5 7 9 10 11 12}
-
 namespace eval ::rawtuning {
     set flat {♭}
     set sharp {♯}
     set dash {–}
-    set tunings [dict create {*}{
+    # these are the chromatic offsets of the traditional frets
+    # repeat to 3rd and 4th above second octave
+    set dulcimer-frets {0 2 4 5 7 9 10 11 12}
 
+    set defaults [dict create {*}{
+	frets chromatic
+	strings single
+	comment {}
+    }]
+    set tunings [dict create {*}{
 	banjo {
 	    4  {
 		plectrum {C3 G3 B3 D4}
@@ -62,6 +66,7 @@ namespace eval ::rawtuning {
 		tenor {C3 G3 D4 A4}
 	    }
 	    5 {
+		frets 5-string-banjo
 		standard {G4 C3 G3 B3 D4}
 		open-G {G4 D3 G3 B3 D4}
 		open-G-alt {G4 C3 G3 B3 D4}
@@ -73,7 +78,9 @@ namespace eval ::rawtuning {
 	    }
 	}
 	bass-guitar {
-	    4 {E1 A1 D2 G2}
+	    4 {
+		standard {E1 A1 D2 G2}
+	    }
 	    5 {
 		low {B0 E1 A1 D2 G2}
 		high {E1 A1 D2 G2 C3}
@@ -83,8 +90,17 @@ namespace eval ::rawtuning {
 		high {E1 A1 D2 G2 C3 F3}
 	    }
 	}
+	bass-viol {
+	    frets continuous
+	    standard {E1 A1 D2 G2}
+	}
+	cello {
+	    frets continuous
+	    standard {C2 G2 D3 A3}
+	}
 	dulcimer {
 	    3 {
+		frets dulcimer
 		traditional-1 {G3 G3 C3}
 		traditional-2 {C4 G3 C3}
 		traditional-3 {C4 F3 C3}
@@ -93,6 +109,7 @@ namespace eval ::rawtuning {
 		modern-3 {D4 G3 D3}
 	    }
 	    4 {
+		frets dulcimer
 		traditional-1 {G3 G3 G3 C3}
 		traditional-2 {C4 C4 G3 C3}
 		traditional-3 {C4 C4 F3 C3}
@@ -131,15 +148,32 @@ namespace eval ::rawtuning {
 		concat {E1 A1 D2 G2 E2 A2 D3 G3 B3 E4}
 	    }
 	    12 {
+		strings paired
 		standard {E1 E2 A1 A2 D2 D3 G2 G3 B3 B3 E4 E4}
 	    }
 	}
 	lyre {
-	    7 {D4 E4 G4 A4 B4 D5 E5}
-	    16 {G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 F5 G5 A5}
+	    7 {
+		frets none
+		standard {D4 E4 G4 A4 B4 D5 E5}
+	    }
+	    16 {
+		frets none
+		standard {G3 A3 B3 C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 F5 G5 A5}
+	    }
 	}
 	mandolin {
-	    standard {G3 G3 D4 D4 A4 A4 E5 E5}
+	    strings paired
+	    standard     {G3 G3 D4 D4 A4 A4 E5 E5}
+	    cajun        {F3 F3 C4 C4 G4 G4 D5 D5}
+	    open-G       {G3 G3 D4 D4 G4 G4 B4 B4}
+	    sawmill      {G3 G3 D4 D4 G4 G4 D5 D5}
+	    geedad       {G3 G3 D4 D4 A4 A4 D5 D5}
+	    open-D       {D3 D3 D4 D4 A4 A4 D5 D5}
+	    high-bass    {A3 A3 D4 D4 A4 A4 E5 E5}
+	    cross-tuning {A3 A3 E4 E4 A4 A4 E5 E5}
+	    open-A       {A3 A3 E4 E4 A4 A4 C#5 C#5 }
+	    
 	}
 	stick {
 	    8 {
@@ -186,14 +220,19 @@ namespace eval ::rawtuning {
 	    bass {E1 A1 D2 G2}
 	    bass-alt {D1 A1 D2 G2}
 	}
+	viola {
+	    frets continuous
+	    standard {C3 G3 D4 A4}
+	}
 	violin {
-	    standard {G3 D4 A4 E5}
-	    cajun    {F3 C4 G4 D5}
-	    open-G   {G3 D4 G4 B4}
-	    sawmill  {G3 D4 G4 D5}
-	    gee-dad  {G3 D4 A4 D5}
-	    dead-man {D4 D4 A4 D5}
-	    high-bass {A3 D4 A4 E5}
+	    frets continuous
+	    standard     {G3 D4 A4 E5}
+	    cajun        {F3 C4 G4 D5}
+	    open-G       {G3 D4 G4 B4}
+	    sawmill      {G3 D4 G4 D5}
+	    gee-dad      {G3 D4 A4 D5}
+	    dead-man     {D4 D4 A4 D5}
+	    high-bass    {A3 D4 A4 E5}
 	    cross-tuning {A3 E4 A4 E5}
 	    calico       {A3 E4 A4 C#5}
 	    old-sledge   {A3 E4 A4 D5}
@@ -201,6 +240,8 @@ namespace eval ::rawtuning {
 	    get-up-in-the-cool {E4 E4 A4 E5}
 	}
 	zither {
+	    frets zither
+	    strings zither
 	    comment {
 		The first five strings are fretted, and you can see the dulcimer there.
 		The rest of the strings are unfretted.  The first group is 'accompaniment',
@@ -217,7 +258,9 @@ namespace eval ::rawtuning {
 	    }
 	}
 	15/14-hammered-dulcimer {
-	    comment { this is complicated, go look it up }
+	    frets none
+	    strings hammered-dulcimer
+	    comment { this tuning is in semi-tone intervalsis complicated, go look it up }
 	    standard {0 2 4 5 7 9 10 12 14 15 17 19 20 22 | 6 7 9 11 12 14 16 17 19 21 22 24 26 27 29 | 13 14 16 18 19 21 23 24 26 28 29 31 33 34 36 38}
 	}
     }]
@@ -226,12 +269,48 @@ namespace eval ::rawtuning {
 proc ::rawtuning::keys-dict {} {dict keys $::rawtuning::tunings}
 proc ::rawtuning::get-dict {args} {dict get $::rawtuning::tunings {*}$args}
 
+proc ::rawtuning::instruments {} {
+    set inst {}
+    foreach i [dict keys $rawtuning::tunings] {
+	set strings {}
+	foreach s [dict keys [dict get $rawtuning::tunings $i]] {
+	    if {[string is integer $s] && [string is list [dict get $rawtuning::tunings $i $s]]} {
+		lappend strings $s
+	    }
+	}
+	if {$strings ne {}} {
+	    foreach s $strings { lappend inst [list $i $s] }
+	} else {
+	    lappend inst $i
+	}
+    }
+    return $inst
+}
+
+proc ::rawtuning::instrument {inst} {
+    set instrument $rawtuning::defaults
+    dict for {key val} [dict get $rawtuning::tunings {*}$inst] {
+	if {[dict exists $instrument $key]} {
+	    dict set instrument $key $val; # override default value
+	} else {
+	    dict set instrument tuning $key $val
+	}
+    }
+    return $instrument
+}
+
+if {1} {
+    foreach i [::rawtuning::instruments] {
+	puts "$i -> [::rawtuning::instrument $i]"
+    }
+}
+
 # munich zither fretted a a d g c (a == 440)
 # accompaniment eb bb f c g d a e b f# c# g#
 # bass Eb Bb F C G D A E B F# C# G#
 # contrabass F E Eb D C# C B Bb A G# G F# FF		 
 
-    #
+#
 # take tunings as lists of notename octaves
 # and other formats to be determined, and 
 # translate to preset format:
