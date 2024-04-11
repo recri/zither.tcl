@@ -34,11 +34,11 @@ namespace eval ::params {
     array set ::params::params {
 	mouse 0
 	touch 1
-	dev /dev/input/event10
+	dev /dev/input/event11
 	fullscreen 1
-	width 800
-	height 480
-	orientation 180
+	height 800
+	width 480
+	orientation 270
     }
     # params of muscial interest
     # 	preset bass-guitar-4  strings 4 root E1 tuning {0  5 5 5}

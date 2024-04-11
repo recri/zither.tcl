@@ -31,7 +31,7 @@ namespace eval ::window {
 
     variable data
     array set ::window::data [array get ::params::defaults]
-    array set ::window::data {chgt 0 cwid 0 shgt 0 fwid 0}
+    array set ::window::data {chgt 0 cwid 0 sper 0 fper 0}
     
     proc adjust {w which value {redraw 1}} {
 
@@ -70,7 +70,7 @@ namespace eval ::window {
 	    sound {
 		::sound::select $::window::data(sound)
 	    }
-	    fwid - shgt - cwid - chgt { # window and fretboard geometry
+	    fper - sper - cwid - chgt { # window and fretboard geometry
 	    }
 	    default {
 		error "no case for $which in adjust"
@@ -83,23 +83,44 @@ namespace eval ::window {
 	$w.c delete all
 	set cwid [winfo width $w.c]
 	set chgt [winfo height $w.c]
-	set fwid [expr {$cwid/double($::window::data(frets))}]
-	set shgt [expr {$chgt/double($::window::data(strings))}]
+	set ::window::data(cwid) $cwid
+	set ::window::data(chgt) $chgt
+	switch $::params::params(orientation) {
+	    0 - 180 {
+		set fper [expr {$cwid/double($::window::data(frets))}]
+		set sper [expr {$chgt/double($::window::data(strings))}]
+	    }
+	    90 - 270 {
+		set fper [expr {$chgt/double($::window::data(frets))}]
+		set sper [expr {$cwid/double($::window::data(strings))}]
+	    }
+	}
+	set ::window::data(fper) $fper
+	set ::window::data(sper) $sper
+
 	set keynote [::midi::name-to-note $::window::data(tonic)]
 	set scalenotes [lmap n [::midi::get-mode $::window::data(mode)] {expr {($keynote+$n)%12}}]
 	
-	set ::window::data(cwid) $cwid
-	set ::window::data(chgt) $chgt
-	set ::window::data(fwid) $fwid
-	set ::window::data(shgt) $shgt
+	puts "[array get ::window::data *wid] [array get ::window::data *hgt]"
 	
+	switch $::params::params(orientation) {
+	    0 - 180 {
+		set xper $fper
+		set yper $sper
+	    }
+	    90 - 270 {
+		set xper $sper
+		set yper $fper
+	    }
+	}
+
 	set in 4
 	set x0 $in
 	set y0 $in
-	set xm [expr {$fwid/2.0}]
-	set ym [expr {$shgt/2.0}]
-	set xc [expr {$fwid-$in}]
-	set yc [expr {$shgt-$in}]
+	set xm [expr {$xper/2.0}]
+	set ym [expr {$yper/2.0}]
+	set xc [expr {$xper-$in}]
+	set yc [expr {$yper-$in}]
 		
 	set button [list $x0 $y0 $x0 $ym $x0 $yc $xm $yc $xc $yc $xc $ym $xc $y0 $xm $y0]
 
@@ -110,12 +131,12 @@ namespace eval ::window {
 	for {set string 0} {$string < $::window::data(strings)} {incr string} {
 	    for {set fret 0} {$fret < $::window::data(frets)} {incr fret} {
 		foreach {x y} [fret-to-window $string $fret] break;
-		set xc [expr {$x+$fwid}]
-		set yc [expr {$y+$shgt}]
+		set xc [expr {$x+$xper}]
+		set yc [expr {$y+$yper}]
 		set p [$w.c create polygon $button -outline white -fill {} -smooth true]
 		$w.c move $p $x $y
 		# label button
-		set l [$w.c create text [expr {$x+0.5*$fwid}] [expr {$y+0.5*$shgt}] -text "$string.$fret" -anchor c -fill white -font MyButtonFont]
+		set l [$w.c create text [expr {$x+0.5*$xper}] [expr {$y+0.5*$yper}] -text "$string.$fret" -anchor c -fill white -font MyButtonFont]
 		# label with notes
 		set note [expr {[lindex $::window::data(stringnotes) $string]+$fret}]
 		$w.c itemconfigure $l -text [::midi::note-to-name $note $::window::data(tonic)] -angle [expr {90+$::params::params(orientation)}]
@@ -141,12 +162,18 @@ namespace eval ::window {
     proc window-to-fret {x y} {
 	switch $::params::params(orientation) {
 	    0 {
-		set s [expr {max(0,min($::window::data(strings), int(($::window::data(chgt)-$y)/$::window::data(shgt))))}]
-		set f [expr {int($x/$::window::data(fwid))}]
+		set s [expr {max(0,min($::window::data(strings), $::window::data(strings)-int($y/$::window::data(sper))-1))}]
+		set f [expr {int($x/$::window::data(fper))}]
+	    }
+	    90 {
 	    }
 	    180 {
-		set s [expr {max(0,min($::window::data(strings), int($y/$::window::data(shgt))))}]
-		set f [expr {$::window::data(frets)-int($x/$::window::data(fwid))-1}]
+		set s [expr {max(0,min($::window::data(strings), int($y/$::window::data(sper))))}]
+		set f [expr {$::window::data(frets)-int($x/$::window::data(fper))-1}]
+	    }
+	    270 {
+		set s [expr {max(0,min($::window::data(strings), $::window::data(strings)-int($x/$::window::data(sper))-1))}]
+		set f [expr {int($y/$::window::data(fper))}]
 	    }
 	}
 	list $s $f
@@ -156,12 +183,20 @@ namespace eval ::window {
     proc fret-to-window {string fret} {
 	switch $::params::params(orientation) {
 	    0 {
-		set x [expr {$fret*$::window::data(fwid)}]
-		set y [expr {($::window::data(strings)-($string+1.0))*$::window::data(shgt)}];
+		set x [expr {$fret*$::window::data(fper)}]
+		set y [expr {($::window::data(strings)-($string+1.0))*$::window::data(sper)}];
+	    }
+	    90 {
+		set x [expr {$string*$::window::data(sper)}]
+		set y [expr {($::window::data(frets)-($fret+1.0))*$::window::data(fper)}]
 	    }
 	    180 {
-		set x [expr {($::window::data(frets)-$fret-1)*$::window::data(fwid)}]
-		set y [expr {$string*$::window::data(shgt)}]
+		set x [expr {($::window::data(frets)-($fret+1.0))*$::window::data(fper)}]
+		set y [expr {$string*$::window::data(sper)}]
+	    }
+	    270 {
+		set x [expr {($::window::data(strings)-($string+1.0))*$::window::data(sper)}]
+		set y [expr {$fret*$::window::data(fper)}];
 	    }
 	}
 	list $x $y
@@ -230,12 +265,13 @@ namespace eval ::window {
     }
 
     proc main {w args} {
-	#
-	touch::init .c
-
 	# canvas fretboard
 	pack [canvas $w.c] -side top -fill both -expand true
 	.c configure -width $::params::params(width) -height $::params::params(height) -bg black -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0
+
+	touch::init .c
+	bind $w.c <Configure> [list ::window::redraw $w]
+	bind $w.c <Button-3> [list ::window::controls $w]
 
 	# set default values, first time
 	array set ::window::data [array get ::params::defaults]
@@ -244,9 +280,6 @@ namespace eval ::window {
 	foreach {key value} [array get ::window::data] { ::window::adjust $w $key $value 0 }
 	::window::adjust $w $key $value
 	
-	bind $w.c <Configure> [list ::window::redraw $w]
-	bind $w.c <Button-3> [list ::window::controls $w]
-
 	if {$::params::params(touch)} {
 	    bind $w.c <<TouchBegin>> {::window::note + %d %x %y}
 	    bind $w.c <<TouchUpdate>> {::window::note . %d %x %y}
