@@ -24,7 +24,7 @@ proc ::sound::note {action id freq} {
 	$::sound::data(factory) $command
 	sound::jack connect $command:out_0 system:playback_1
 	sound::jack connect $command:out_0 system:playback_2
-	puts "$::sound::data(factory) $command"
+	# puts "$::sound::data(factory) $command"
     }
     switch -exact $action {
 	+ {

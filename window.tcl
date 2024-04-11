@@ -28,22 +28,25 @@ package require evdev
 package require sound
 
 namespace eval ::window {
-
     variable data
     array set ::window::data [array get ::params::defaults]
     array set ::window::data {chgt 0 cwid 0 sper 0 fper 0}
     
-    proc adjust {w which value {redraw 1}} {
+    proc adjust {w f which value {redraw 1}} {
 
-	# puts "adjust $w $which $value $redraw -> $::window::data($which)"
+	# puts "adjust $w $f $which $value $redraw -> $::window::data($which)"
 
-	set ::window::data($which) $value
+	if { ! [info exists ::window::data($which)] || $::window::data($which) ne $value} {
+	    set ::window::data($which) $value
+	}
+
 	# the fretboard is a rectangle of "buttons" frets wide and strings high
 	# which has a tuning specified by the root note in the lower left corner
 	switch $which {
 	    instrument {	# the base instrument
 		set ::window::data(instdict) [::instrument::get-instrument $::window::data(instrument)]
-		::window::adjust $w tuning [lindex [::instrument::get-tunings $::window::data(instdict)] 0]
+		control-rebuild-tuning $w $f
+		::window::adjust $w $f tuning [lindex [::instrument::get-tunings $::window::data(instdict)] 0]
 	    }
 	    frets {	# the number of frets on the fretboard
 	    }
@@ -54,10 +57,7 @@ namespace eval ::window {
 	    stringnotes {	# the midi note for each string
 	    }
 	    tuning {	# the notes the strings are tuned to from closest to furthest
-		foreach {key val} [::instrument::expand-tuning [::instrument::get-tuning $::window::data(instdict) $::window::data(tuning)]] {
-		    set ::window::data($key) $val
-		    adjust $w $key $val 0
-		}
+		::window::adjust-all $w $f [::instrument::expand-tuning [::instrument::get-tuning $::window::data(instdict) $::window::data(tuning)]]
 	    }
 	    tonic {	# the tonic is the note which is the root of the scale
 	    }
@@ -74,13 +74,23 @@ namespace eval ::window {
 		error "no case for $which in adjust"
 	    }
 	}
-	if {$redraw} { redraw $w }
+	if {$redraw} { redraw $f }
     }
 
+    proc adjust-all {w f keyvals} {
+	# puts "adjust-all $w $f {$keyvals}"
+	if {[llength $keyvals] > 0} {
+	    if {[llength $keyvals] > 2} {
+		foreach {key value} [lrange $keyvals 0 end-2] { ::window::adjust $w $f $key $value 0 }
+	    }
+	    ::window::adjust $w $f {*}[lrange $keyvals end-1 end] 1
+	}
+    }
+    
     proc redraw {w} {
-	$w.c delete all
-	set cwid [winfo width $w.c]
-	set chgt [winfo height $w.c]
+	$w delete all
+	set cwid [winfo width $w]
+	set chgt [winfo height $w]
 	set ::window::data(cwid) $cwid
 	set ::window::data(chgt) $chgt
 	set fper [expr {$chgt/double($::window::data(frets))}]
@@ -108,29 +118,30 @@ namespace eval ::window {
 	}
 
 	for {set string 0} {$string < $::window::data(strings)} {incr string} {
+	    set stringnote [expr {[lindex $::window::data(stringnotes) $string]+$::window::data(nut)}]
 	    for {set fret 0} {$fret < $::window::data(frets)} {incr fret} {
 		foreach {x y} [fret-to-window $string $fret] break;
 		set xc [expr {$x+$xper}]
 		set yc [expr {$y+$yper}]
-		set p [$w.c create polygon $button -outline white -fill {} -smooth true]
-		$w.c move $p $x $y
+		set p [$w create polygon $button -outline white -fill {} -smooth true]
+		$w move $p $x $y
 		# label button
-		set l [$w.c create text [expr {$x+0.5*$xper}] [expr {$y+0.5*$yper}] -text "$string.$fret" -anchor c -fill white -font MyButtonFont]
+		set l [$w create text [expr {$x+0.5*$xper}] [expr {$y+0.5*$yper}] -text "$string.$fret" -anchor c -fill white -font MyButtonFont]
 		# label with notes
-		set note [expr {[lindex $::window::data(stringnotes) $string]+$fret}]
-		$w.c itemconfigure $l -text [::midi::note-to-name $note $::window::data(tonic)]
-		if {[lsearch -exact -integer $scalenotes [expr {$note % 12}]] >= 0} {
-		    if {$keynote == ($note % 12)} {
+		set fretnote [expr {$stringnote+$fret}]
+		$w itemconfigure $l -text [::midi::note-to-name $fretnote $::window::data(tonic)]
+		if {[lsearch -exact -integer $scalenotes [expr {$fretnote % 12}]] >= 0} {
+		    if {$keynote == ($fretnote % 12)} {
 			# highlight the tonic
-			$w.c itemconfigure $p -width 5 -outline white
+			$w itemconfigure $p -width 5 -outline white
 		    } else {
 			# emphasize the scale
-			$w.c itemconfigure $p -width 2 -outline white
+			$w itemconfigure $p -width 2 -outline white
 		    }
 		} else {
 		    # deemphasize the accidentals
-		    $w.c itemconfigure $l -fill darkgrey
-		    $w.c itemconfigure $p -width 1 -outline grey20
+		    $w itemconfigure $l -fill darkgrey
+		    $w itemconfigure $p -width 1 -outline grey20
 		}
 	    }
 	}
@@ -162,6 +173,7 @@ namespace eval ::window {
 	list $x $y
     }
     
+    # play the note
     proc note {action id x y} {
 	foreach {string fret} [touch-to-fret $x $y] break
 	# puts "note $action $id $x $y $string $fret"
@@ -172,88 +184,87 @@ namespace eval ::window {
 	tcl::mathfunc::max {*}[lmap i $list {string length $i}]
     }
 
-    proc myoptionmenu {w name text values} {
-	labelframe $w.controls.$name -text $text
-	set m [tk_optionMenu $w.controls.$name.options ::window::data($name) {*}$values]
+    proc myscale {w f name from to} {
+	labelframe $w.$name -text [string totitle $name]
+	scale $w.$name.scale -orient horizontal -showvalue true \
+	    -variable ::window::data($name) -from $from -to $to \
+	    -command [list ::window::adjust $w $f $name]
+	pack $w.$name.scale -fill x -expand true
+	return $w.$name
+    }
+    
+    proc myoptionmenu {w f name values} {
+	labelframe $w.$name -text [string totitle $name]
+	set m [tk_optionMenu $w.$name.options ::window::data($name) {*}$values]
+	$w.$name.options configure -width [max-width $values]
 	foreach v $values {
-	    $m entryconfigure $v -command [list ::window::adjust $w $name $v]
+	    $m entryconfigure $v -command [list ::window::adjust $w $f $name $v]
 	}
-	pack $w.controls.$name.options
-	return $w.controls.$name
+	pack $w.$name.options -fill x -expand true
+	return $w.$name
     }
     
-    proc myspinupdate {w name} { ::window::adjust $w $name [$w.controls.$name.spin get] }
-    
-    proc myspinbox {w name text values} {
-	labelframe $w.controls.$name -text $text
-	pack [spinbox $w.controls.$name.spin -width [max-width $values] -values $values \
-		  -command [list ::window::myspinupdate $w $name]]
-	$w.controls.$name.spin set $::window::data($name)
-	return $w.controls.$name
-    }
+    proc controls {w f} {
 
-    proc range {from to increment} {
-	set range {}
-	for {set i $from} {$i <= $to} {incr i $increment} {
-	    lappend range $i
-	}
-	return $range
-    }
-    
-    proc controls {w} {
-
-	# puts "::window::data [array get ::window::data]"
-	if {[winfo exists $w.controls]} { destroy $w.controls }
+	if {[winfo exists $w]} { destroy $w }
 
 	# controls
-	toplevel $w.controls
+	toplevel $w
 	
 	# choices
-	pack [myoptionmenu $w instrument Instrument [::instrument::get-instruments]] -side top -fill x -expand true
-	pack [myoptionmenu $w tuning Tuning [::instrument::get-tunings $::window::data(instdict)]] -side top -fill x -expand true
-	pack [myspinbox $w {tonic} {Key} [::midi::get-keys]] -side top -fill x -expand true
-	pack [myspinbox $w {mode} {Mode} [::midi::get-modes]] -side top -fill x -expand true
-	pack [myspinbox $w {nut} {Nut} [range -24 24 1]] -side top -fill x -expand true
-	pack [myspinbox $w {frets} {Frets} [range 1 36 1]] -side top -fill x -expand true
-	#pack [myspinbox $w {preset} {Preset} [::presets::keys]] -side top -fill x -expand true
-	pack [myspinbox $w {sound} {Sound} [::sound::list-sounds]] -side top -fill x -expand true
+	pack [myoptionmenu $w $f instrument [::instrument::get-instruments]] -side top -fill x -expand true
+	pack [myoptionmenu $w $f tuning [::instrument::get-tunings $::window::data(instdict)]] -side top -fill x -expand true
+	pack [myoptionmenu $w $f tonic [::midi::get-keys]] -side top -fill x -expand true
+	pack [myoptionmenu $w $f mode [::midi::get-modes]] -side top -fill x -expand true
+	pack [myscale $w $f nut -24 24] -side top -fill x -expand true
+	pack [myscale $w $f frets 1 36] -side top -fill x -expand true
+	pack [myoptionmenu $w $f sound [::sound::list-sounds]] -side top -fill x -expand true
 
 	# control buttons
-	pack [button $w.controls.done -text Dismiss -command [list destroy $w.controls]] -side top -fill x -expand true
-	pack [button $w.controls.quit -text Quit -command {destroy .}] -side top -fill x -expand true
-	pack [button $w.controls.panic -text Panic -foreground red -command {sound::stop}] -side top -fill x -expand true
+	pack [button $w.done -text Dismiss -command [list destroy $w]] -side top -fill x -expand true
+	pack [button $w.quit -text Quit -command {destroy .}] -side top -fill x -expand true
+	pack [button $w.panic -text Panic -foreground red -command {sound::stop}] -side top -fill x -expand true
     }
 
-    proc main {w args} {
-	# canvas fretboard
-	pack [canvas $w.c] -side top -fill both -expand true
-	.c configure -width $::params::params(width) -height $::params::params(height) -bg black -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0
+    proc control-rebuild-tuning {w f} {
+	if {[winfo exists $w] && [winfo exists $w.tuning]} {
+	    destroy $w.tuning
+	    pack [myoptionmenu $w $f tuning [::instrument::get-tunings $::window::data(instdict)]] -side top -fill x -expand true -after $w.instrument
+	}
+    }
+    
+    proc main {args} {
 
-	touch::init .c
-	bind $w.c <Configure> [list ::window::redraw $w]
-	bind $w.c <Button-3> [list ::window::controls $w]
+	# canvas fretboard
+	pack [canvas .fretboard] -side top -fill both -expand true
+	.fretboard configure -width $::params::params(width) -height $::params::params(height) -bg black \
+	    -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0
+	
+	# bindings for window configure and control button
+	bind .fretboard <Configure> {::window::redraw .fretboard}
+	bind .fretboard <Button-3> {::window::controls .zither .fretboard}
+
+	# touch handler
+	touch::init .fretboard
 
 	# set default values, first time
 	array set ::window::data [array get ::params::defaults]
 	
 	# set default values, second time
-	foreach {key value} [array get ::window::data] { ::window::adjust $w $key $value 0 }
-	::window::adjust $w $key $value
+	::window::adjust-all .zither .fretboard [array get ::window::data]
 	
 	if {$::params::params(touch)} {
-	    bind $w.c <<TouchBegin>> {::window::note + %d %x %y}
-	    bind $w.c <<TouchUpdate>> {::window::note . %d %x %y}
-	    bind $w.c <<TouchEnd>> {::window::note - %d %x %y}
+	    bind .fretboard <<TouchBegin>> {::window::note + %d %x %y}
+	    bind .fretboard <<TouchUpdate>> {::window::note . %d %x %y}
+	    bind .fretboard <<TouchEnd>> {::window::note - %d %x %y}
 	}
 	if {$::params::params(mouse)} {
-	    bind $w.c <ButtonPress-1> {::window::note + f %x %y}
-	    bind $w.c <B1-Motion> {::window::note . f %x %y}
-	    bind $w.c <ButtonRelease-1> {::window::note - f %x %y}
+	    bind .fretboard <ButtonPress-1> {::window::note + f %x %y}
+	    bind .fretboard <B1-Motion> {::window::note . f %x %y}
+	    bind .fretboard <ButtonRelease-1> {::window::note - f %x %y}
 	}
 
-	foreach {key value} $args {
-	    window::adjust $w $key $value
-	}
+	::window::adjust-all .zither .fretboard $args
 
 	if {$::params::params(fullscreen)} {
 	    after 1 {

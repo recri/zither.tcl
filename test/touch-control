@@ -1,0 +1,75 @@
+#!/usr/bin/wish
+
+#
+# long complicated test to see if the zither control interface can be used with touch
+#
+# answer is there appears to be a bug with multiple option menus, the entry select
+# works with the first option menu, as you slide along the first menu, the entries
+# highlight as you pass over them, and releasing selects the highlignted entry.
+# on subsequent menues there is no highlight and nothing is ever selected.
+#
+
+namespace eval ::window {
+    array set data {}
+}
+
+proc get-instruments {} { list banjo guitar bass violin zither }
+proc get-tunings {} { list standard open-C open-G open-D }
+proc get-keys {} { list Gb Db Ab Eb Bb F C G D A E B F# C# }
+proc get-modes {} { list Ionian	Dorian Phrygian Lydian Mixolydian Aeolian Locrian }
+proc get-sounds {} { list banjo guitar bass violin zither }
+
+proc max-width {list} {
+    tcl::mathfunc::max {*}[lmap i $list {string length $i}]
+}
+
+proc ::window::adjust {w which value {redraw 1}} {
+    puts "adjust $w $which $value $redraw"
+}
+
+proc myscale {w name from to} {
+    labelframe $w.$name -text [string totitle $name]
+    scale $w.$name.scale -orient horizontal -showvalue true \
+	-variable ::window::data($name) -from $from -to $to \
+	-command [list ::window::adjust $w $name [list set ::window::data($name)]]
+    pack $w.$name.scale -fill x -expand true
+    return $w.$name
+}
+    
+proc myoptionmenu {w name values} {
+    labelframe $w.$name -text [string totitle $name]
+    set m [tk_optionMenu $w.$name.options ::window::data($name) {*}$values]
+    $w.$name.options configure -width [max-width $values]
+    foreach v $values {
+	$m entryconfigure $v -command [list ::window::adjust $w $name $v]
+    }
+    pack $w.$name.options -fill x -expand true
+    return $w.$name
+}
+    
+proc controls {w} {
+
+    # puts "::window::data [array get ::window::data]"
+    if {[winfo exists $w]} { destroy $w }
+    
+    # controls
+    toplevel $w
+    
+    # choices
+    pack [myoptionmenu $w instrument [get-instruments]] -side top -fill x -expand true
+    pack [myoptionmenu $w tuning [get-tunings]] -side top -fill x -expand true
+    pack [myoptionmenu $w tonic [get-keys]] -side top -fill x -expand true
+    pack [myoptionmenu $w mode [get-modes]] -side top -fill x -expand true
+    pack [myscale $w nut -24 24] -side top -fill x -expand true
+    pack [myscale $w frets 1 36] -side top -fill x -expand true
+    pack [myoptionmenu $w sound [get-sounds]] -side top -fill x -expand true
+    
+    # control buttons
+    pack [button $w.done -text Dismiss -command [list destroy $w]] -side top -fill x -expand true
+    pack [button $w.quit -text Quit -command {destroy .}] -side top -fill x -expand true
+    pack [button $w.panic -text Panic -foreground red -command {sound::stop}] -side top -fill x -expand true
+}
+
+pack [canvas .fretboard] -expand true -fill both
+wm withdraw .
+controls .zither

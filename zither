@@ -37,7 +37,7 @@ proc main {argc argv} {
 	    puts "valid option keys are [array get ::params::params] [array get ::params::defaults]"
 	}
     }
-    ::window::main {} {*}$opts
+    ::window::main {*}$opts
 
 }
 
