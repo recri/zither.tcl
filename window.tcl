@@ -35,14 +35,12 @@ namespace eval ::window {
     
     proc adjust {w which value {redraw 1}} {
 
-	puts "adjust $w $which $value $redraw -> $::window::data($which)"
+	# puts "adjust $w $which $value $redraw -> $::window::data($which)"
 
 	set ::window::data($which) $value
 	# the fretboard is a rectangle of "buttons" frets wide and strings high
 	# which has a tuning specified by the root note in the lower left corner
 	switch $which {
-	    orientation {	# fretboard layout on screen
-	    }
 	    instrument {	# the base instrument
 		set ::window::data(instdict) [::instrument::get-instrument $::window::data(instrument)]
 		::window::adjust $w tuning [lindex [::instrument::get-tunings $::window::data(instdict)] 0]
@@ -85,35 +83,16 @@ namespace eval ::window {
 	set chgt [winfo height $w.c]
 	set ::window::data(cwid) $cwid
 	set ::window::data(chgt) $chgt
-	switch $::params::params(orientation) {
-	    0 - 180 {
-		set fper [expr {$cwid/double($::window::data(frets))}]
-		set sper [expr {$chgt/double($::window::data(strings))}]
-	    }
-	    90 - 270 {
-		set fper [expr {$chgt/double($::window::data(frets))}]
-		set sper [expr {$cwid/double($::window::data(strings))}]
-	    }
-	}
+	set fper [expr {$chgt/double($::window::data(frets))}]
+	set sper [expr {$cwid/double($::window::data(strings))}]
+	set xper $sper
+	set yper $fper
 	set ::window::data(fper) $fper
 	set ::window::data(sper) $sper
 
 	set keynote [::midi::name-to-note $::window::data(tonic)]
 	set scalenotes [lmap n [::midi::get-mode $::window::data(mode)] {expr {($keynote+$n)%12}}]
 	
-	puts "[array get ::window::data *wid] [array get ::window::data *hgt]"
-	
-	switch $::params::params(orientation) {
-	    0 - 180 {
-		set xper $fper
-		set yper $sper
-	    }
-	    90 - 270 {
-		set xper $sper
-		set yper $fper
-	    }
-	}
-
 	set in 4
 	set x0 $in
 	set y0 $in
@@ -139,7 +118,7 @@ namespace eval ::window {
 		set l [$w.c create text [expr {$x+0.5*$xper}] [expr {$y+0.5*$yper}] -text "$string.$fret" -anchor c -fill white -font MyButtonFont]
 		# label with notes
 		set note [expr {[lindex $::window::data(stringnotes) $string]+$fret}]
-		$w.c itemconfigure $l -text [::midi::note-to-name $note $::window::data(tonic)] -angle [expr {90+$::params::params(orientation)}]
+		$w.c itemconfigure $l -text [::midi::note-to-name $note $::window::data(tonic)]
 		if {[lsearch -exact -integer $scalenotes [expr {$note % 12}]] >= 0} {
 		    if {$keynote == ($note % 12)} {
 			# highlight the tonic
@@ -156,54 +135,35 @@ namespace eval ::window {
 	    }
 	}
     }
-    
+
+    # translate touch coordinates into the window system coordinates
+    # x or wayland would do this for us, but Tk doesn't handle touch
+    proc touch-to-window {x y} {
+	return [list $y [expr {max(0,$::window::data(chgt)-$x-1)}]]
+    }	
+
     # translate window coordinates, x and y increasing from upper right corner
     # into string and fret
-    proc window-to-fret {x y} {
-	switch $::params::params(orientation) {
-	    0 {
-		set s [expr {max(0,min($::window::data(strings), $::window::data(strings)-int($y/$::window::data(sper))-1))}]
-		set f [expr {int($x/$::window::data(fper))}]
-	    }
-	    90 {
-	    }
-	    180 {
-		set s [expr {max(0,min($::window::data(strings), int($y/$::window::data(sper))))}]
-		set f [expr {$::window::data(frets)-int($x/$::window::data(fper))-1}]
-	    }
-	    270 {
-		set s [expr {max(0,min($::window::data(strings), $::window::data(strings)-int($x/$::window::data(sper))-1))}]
-		set f [expr {int($y/$::window::data(fper))}]
-	    }
-	}
+    # well, not exactly.  Translate touch input coordinates, which didn't rotate
+    # with the screen when we put the touchscreen into portrait mode.
+    proc touch-to-fret {x y} {
+	foreach {x y} [::window::touch-to-window $x $y] break
+	set s [expr {max(0,min($::window::data(strings), int($x/$::window::data(sper))))}]
+	set f [expr {max(0,min($::window::data(frets), int($y/$::window::data(fper))))}]
 	list $s $f
     }
 
     # translate string and fret coordinates into window coordinates
+    # in this case, they are window coordinates, and this should be
+    # orientation independent
     proc fret-to-window {string fret} {
-	switch $::params::params(orientation) {
-	    0 {
-		set x [expr {$fret*$::window::data(fper)}]
-		set y [expr {($::window::data(strings)-($string+1.0))*$::window::data(sper)}];
-	    }
-	    90 {
-		set x [expr {$string*$::window::data(sper)}]
-		set y [expr {($::window::data(frets)-($fret+1.0))*$::window::data(fper)}]
-	    }
-	    180 {
-		set x [expr {($::window::data(frets)-($fret+1.0))*$::window::data(fper)}]
-		set y [expr {$string*$::window::data(sper)}]
-	    }
-	    270 {
-		set x [expr {($::window::data(strings)-($string+1.0))*$::window::data(sper)}]
-		set y [expr {$fret*$::window::data(fper)}];
-	    }
-	}
+	set y [expr {$fret*$::window::data(fper)}]
+	set x [expr {$string*$::window::data(sper)}]
 	list $x $y
     }
     
     proc note {action id x y} {
-	foreach {string fret} [window-to-fret $x $y] break
+	foreach {string fret} [touch-to-fret $x $y] break
 	# puts "note $action $id $x $y $string $fret"
 	sound::note $action $id [midi::mtof [expr {[lindex $::window::data(stringnotes) $string]+$fret}]]
     }

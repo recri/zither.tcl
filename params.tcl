@@ -38,7 +38,6 @@ namespace eval ::params {
 	fullscreen 1
 	height 800
 	width 480
-	orientation 270
     }
     # params of muscial interest
     # 	preset bass-guitar-4  strings 4 root E1 tuning {0  5 5 5}
