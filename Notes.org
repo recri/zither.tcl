@@ -333,4 +333,5 @@ Top-Loading Style Hardtail Bridge 24.706"
 
 	[ 5.224267] rpi-ft5406 rpi_ft5406: Probing device
 	[ 5.225960] input: FT5406 memory based driver as /devices/virtual/input/input3
-    
+*** The previous is out of date.
+
