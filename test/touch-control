@@ -23,8 +23,13 @@ proc max-width {list} {
     tcl::mathfunc::max {*}[lmap i $list {string length $i}]
 }
 
-proc ::window::adjust {w which value {redraw 1}} {
-    puts "adjust $w $which $value $redraw"
+proc ::window::adjust {w which {value {}} {redraw 1}} {
+   puts -nonewline "{adjust $w $which {$value} $redraw} with data($which) "
+    if {[info exists ::window::data($which)]} {
+	puts " == $::window::data($which)"
+    } else {
+	puts " not set"
+    }
 }
 
 proc myscale {w name from to} {
@@ -36,14 +41,18 @@ proc myscale {w name from to} {
     return $w.$name
 }
     
+proc myoptionmenuselect {w name {value {}}} {
+    $w.$name.options selection clear
+    if {$value eq {}} { set value $::window::data($name) }
+    ::window::adjust $w $name $value
+}
+
 proc myoptionmenu {w name values} {
     labelframe $w.$name -text [string totitle $name]
-    set m [tk_optionMenu $w.$name.options ::window::data($name) {*}$values]
-    $w.$name.options configure -width [max-width $values]
-    foreach v $values {
-	$m entryconfigure $v -command [list ::window::adjust $w $name $v]
-    }
-    pack $w.$name.options -fill x -expand true
+    pack [ttk::combobox $w.$name.options -textvariable ::window::data($name) -values $values -state readonly -width [max-width $values]] -fill x -expand true
+    bind $w.$name.options <<ComboboxSelected>> [list myoptionmenuselect $w $name]
+    myoptionmenuselect $w $name [lindex $values 0]
+    $w.$name.options set [lindex $values 0]
     return $w.$name
 }
     
@@ -56,18 +65,23 @@ proc controls {w} {
     toplevel $w
     
     # choices
-    pack [myoptionmenu $w instrument [get-instruments]] -side top -fill x -expand true
-    pack [myoptionmenu $w tuning [get-tunings]] -side top -fill x -expand true
-    pack [myoptionmenu $w tonic [get-keys]] -side top -fill x -expand true
-    pack [myoptionmenu $w mode [get-modes]] -side top -fill x -expand true
+    pack [myoptionmenu $w instrument [get-instruments]] -side top -expand true -fill x
+    pack [myoptionmenu $w tuning [get-tunings]] -side top -expand true -fill x
+    pack [myoptionmenu $w tonic [get-keys]] -side top -expand true -fill x
+    pack [myoptionmenu $w mode [get-modes]] -side top -expand true -fill x
+    pack [myoptionmenu $w sound [get-sounds]] -side top -expand true -fill x
     pack [myscale $w nut -24 24] -side top -fill x -expand true
     pack [myscale $w frets 1 36] -side top -fill x -expand true
-    pack [myoptionmenu $w sound [get-sounds]] -side top -fill x -expand true
     
     # control buttons
     pack [button $w.done -text Dismiss -command [list destroy $w]] -side top -fill x -expand true
     pack [button $w.quit -text Quit -command {destroy .}] -side top -fill x -expand true
     pack [button $w.panic -text Panic -foreground red -command {sound::stop}] -side top -fill x -expand true
+
+    # hacks
+#    $w configure -width 380 -height 800 -bd 0 -highlightthickness 0
+#    after 1 [list wm attributes $w -fullscreen 1]
+
 }
 
 pack [canvas .fretboard] -expand true -fill both

@@ -34,7 +34,7 @@ namespace eval ::params {
     array set ::params::params {
 	mouse 0
 	touch 1
-	dev /dev/input/event11
+	dev /dev/input/event10
 	fullscreen 1
 	height 800
 	width 480
@@ -44,6 +44,7 @@ namespace eval ::params {
 
     array set ::params::defaults {
 	instrument {bass-guitar 4}
+	strings single
 	tuning standard
 	tonic C
 	mode Ionian
@@ -51,6 +52,7 @@ namespace eval ::params {
 	frets 24
 	sound bass
     }
+
     switch $::tcl_platform(machine) {
 	x86_64 { 
 	    # /dev/input/event4 

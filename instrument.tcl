@@ -54,8 +54,8 @@ namespace eval ::instrument {
     set dulcimer-frets {0 2 4 5 7 9 10 11 12}
 
     set defaults [dict create {*}{
-	frets chromatic
-	strings single
+	frettype chromatic
+	stringtype single
 	comment {}
 	ignore false
     }]
@@ -67,7 +67,7 @@ namespace eval ::instrument {
 		tenor {C3 G3 D4 A4}
 	    }
 	    5 {
-		frets 5-string-banjo
+		frettype 5-string-banjo
 		standard {G4 C3 G3 B3 D4}
 		open-G {G4 D3 G3 B3 D4}
 		open-G-alt {G4 C3 G3 B3 D4}
@@ -90,20 +90,28 @@ namespace eval ::instrument {
 		low {B0 E1 A1 D2 G2 C3}
 		high {E1 A1 D2 G2 C3 F3}
 	    }
+	    8 {
+		stringtype paired
+		standard {E2 E1 A2 A1 D3 D2 G3 G2}
+	    }
+	    12 {
+		stringtype trebled
+		standard {E2 E2 E1 A2 A2 A1 D3 D3 D2 G3 G3 G2}
+	    }
 	}
 	bass-viol {
-	    frets continuous
+	    frettype continuous
 	    ignore true
 	    standard {E1 A1 D2 G2}
 	}
 	cello {
-	    frets continuous
+	    frettype continuous
 	    ignore true
 	    standard {C2 G2 D3 A3}
 	}
 	dulcimer {
 	    3 {
-		frets dulcimer
+		frettype dulcimer
 		traditional-1 {G3 G3 C3}
 		traditional-2 {C4 G3 C3}
 		traditional-3 {C4 F3 C3}
@@ -112,7 +120,7 @@ namespace eval ::instrument {
 		modern-3 {D4 G3 D3}
 	    }
 	    4 {
-		frets dulcimer
+		frettype dulcimer
 		traditional-1 {G3 G3 G3 C3}
 		traditional-2 {C4 C4 G3 C3}
 		traditional-3 {C4 C4 F3 C3}
@@ -151,13 +159,13 @@ namespace eval ::instrument {
 		concat {E1 A1 D2 G2 E2 A2 D3 G3 B3 E4}
 	    }
 	    12 {
-		strings paired
+		stringtype paired
 		standard {E1 E2 A1 A2 D2 D3 G2 G3 B3 B3 E4 E4}
 	    }
 	}
 	hammered-dulcimer {
-	    frets none
-	    strings hammered-dulcimer
+	    frettype none
+	    stringtype hammered-dulcimer
 	    ignore true
 	    comment {https://www.jamesjonesinstruments.com/hammered-dulcimer-tunings}
 	    13/12 {
@@ -182,8 +190,8 @@ namespace eval ::instrument {
 	    }
 	}
 	harp {
-	    frets none
-	    strings harp
+	    frettype none
+	    stringtype harp
 	    ignore true
 	    23 {
 		standard {
@@ -225,8 +233,8 @@ namespace eval ::instrument {
 	    }
 	}
 	lyre {
-	    frets none
-	    strings harp
+	    frettype none
+	    stringtype harp
 	    ignore true
 	    7 {
 		standard {D4 E4 G4 A4 B4 D5 E5}
@@ -236,7 +244,7 @@ namespace eval ::instrument {
 	    }
 	}
 	mandolin {
-	    strings paired
+	    stringtype paired
 	    standard     {G3 G3 D4 D4 A4 A4 E5 E5}
 	    cajun        {F3 F3 C4 C4 G4 G4 D5 D5}
 	    open-G       {G3 G3 D4 D4 G4 G4 B4 B4}
@@ -299,12 +307,12 @@ namespace eval ::instrument {
 	}
 	viola {
 	    ignore true
-	    frets continuous
+	    frettype continuous
 	    standard {C3 G3 D4 A4}
 	}
 	violin {
 	    ignore true
-	    frets continuous
+	    frettype continuous
 	    standard     {G3 D4 A4 E5}
 	    cajun        {F3 C4 G4 D5}
 	    open-G       {G3 D4 G4 B4}
@@ -319,8 +327,8 @@ namespace eval ::instrument {
 	    get-up-in-the-cool {E4 E4 A4 E5}
 	}
 	zither {
-	    frets zither
-	    strings zither
+	    frettype zither
+	    stringtype zither
 	    ignore true
 	    15 {
 		G {G4 A4 B4 C5 D5 E5 F#5 G5 A5 B5 C6 D6 E6 F#6 G6}
@@ -412,24 +420,27 @@ proc ::instrument::get-instruments {} {
 # with informational fields filled from defaults
 # and tunings grouped into a tunings dictionary
 proc ::instrument::get-instrument {inst} {
-    set instdict $::instrument::defaults
-    dict set instdict name $inst
-    dict for {key val} [dict get $::instrument::instruments {*}$inst] {
-	if {[dict exists $instdict $key]} {
-	    dict set instdict $key $val
-	} else {
-	    dict set instdict tunings $key $val
+    if { ! [dict exists ::instrument::cache $inst]} {
+	set instdict $::instrument::defaults
+	dict set instdict name $inst
+	dict for {key val} [dict get $::instrument::instruments {*}$inst] {
+	    if {[dict exists $instdict $key]} {
+		dict set instdict $key $val
+	    } else {
+		dict set instdict tunings $key $val
+	    }
 	}
+	dict set ::instrument::cache $inst $instdict
     }
-    return $instdict
+    dict get $::instrument::cache $inst
 }
 
-proc ::instrument::get-tunings {instdict} {
-    dict keys [dict get $instdict tunings]
+proc ::instrument::get-tunings {inst} {
+    dict keys [dict get [get-instrument $inst] tunings]
 }
 
-proc ::instrument::get-tuning {instdict tuning} {
-    dict get $instdict tunings $tuning
+proc ::instrument::get-tuning {inst tuning} {
+    dict get [get-instrument $inst] tunings $tuning
 }   
 
 # munich zither fretted a a d g c (a == 440)
@@ -446,11 +457,48 @@ proc ::instrument::get-tuning {instdict tuning} {
 # strings - the number of strings
 #
 proc ::instrument::expand-tuning {value} {
+    set instdict [get-instrument $::window::data(instrument)]
+    switch [dict get $instdict stringtype] {
+	single { set multiplicity 1 }
+	paired {  set multiplicity 2 }
+	trebled { set multiplicity 3 }
+	hammered-dulcimer { set multiplicity 1 }
+	harp { set multiplicity 1 }
+	zither {  set multiplicity 1 }
+	default {
+	    error "strings says [dict get $inst strings] and I don't understand"
+	}
+    }
+	
+    switch [dict get $instdict frettype] {
+	chromatic {
+	    # chromatic frets, one per semitone
+	}
+	continuous { 
+	    # no frets, fingering is continuous
+	    # but still draw the semitone names
+	}
+	dulcimer {
+	    # semi-diatonic, some frets are absent
+	}
+	none {
+	    # the strings are the notes
+	}
+	zither {
+	    # the fancy zithers, 5 fretted strings, the rest are none
+	}
+	5-string-banjo { 
+	    # chromatic, but the first string starts at the fifth fret
+	}
+	default {
+	    error "frets says [dict  get $inst frets] and I don't understand"
+	}
+    }
     set strings [llength $value]
+    set courses [expr {$strings/$multiplicity}]
     set root [lindex $value 0]
     set stringnotes [lmap note $value {::midi::name-octave-to-note $note}]
-    set intervals [list 0 {*}[lmap n1 [lrange $stringnotes 0 end-1] n2 [lrange $stringnotes 1 end] {expr {$n2-$n1}}]]
-    return [list strings $strings root $root stringnotes $stringnotes]
+    return [list multiplicity $multiplicity strings $strings courses $courses root $root stringnotes $stringnotes]
 }
 
 if {0} {

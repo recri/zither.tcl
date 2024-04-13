@@ -15,6 +15,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 # 
+run-zither:: ; DISPLAY=:0 ./zither dev /dev/input/event5 instrument 'guitar 6' frets 13 sound guitar
+
 all:: pkgIndex.tcl
 
 clean::
