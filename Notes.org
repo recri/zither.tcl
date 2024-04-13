@@ -334,4 +334,42 @@ Top-Loading Style Hardtail Bridge 24.706"
 	[ 5.224267] rpi-ft5406 rpi_ft5406: Probing device
 	[ 5.225960] input: FT5406 memory based driver as /devices/virtual/input/input3
 *** The previous is out of date.
-
+*** The contol panel option menus were broken because the Tk menu
+    implementation is broken.  Solved by using a combobox.
+    Next try a treeview for the instrument listing.
+** To Do List
+*** implement dulcimer fretting
+    can rewrite the notes array to implement the missing frets
+    can hack the button drawing code to make the buttons larger
+*** implement harp and lyre
+    simply lay out the strings in order down the board
+    perhaps leave space for mutes. sustains, control buttons
+    I think the high notes are closest to the head, flippable
+    A long harp could be folded into halves or thirds
+*** implement hammered dulcimer
+    three "strings" of frets each of which is a note
+*** implement zither layouts.
+    The folk zithers are just like a harp.
+    The concert and alpine
+*** implement sound controls.
+*** implement one note per fretted string
+*** implement scale coloring
+    rather than, or in addition to, notating the note name
+    find some nice circular, color blind palettes to color
+    notes by scale position.
+*** implement touch control launch
+    take one fret/course position and make it the control
+    button, allow it to be dragged around, or repositioned
+    to n, s, e, w, ne, se, nw, sw, sse, etc.
+    Or just put them in the last row, add an extra fret for
+    them.
+*** allow additiona touch controls on screen
+    nut transpositions, key changes, panic button, whammy,
+    arbitrary midi events.  All draggable.
+*** place force sensitive resistors under the touch panel.
+*** add a breath controller
+    tube which passes a barometer, just blow or suck past the
+    barometer.  Maybe don't need any airtight connection, just
+    a leaky tube in the case with the baromenter.
+*** add onboard audio hat with speakers, and headphone jack
+*** add motion sensing.

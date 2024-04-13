@@ -331,12 +331,18 @@ namespace eval ::instrument {
 	    stringtype zither
 	    ignore true
 	    15 {
+		frettype none
+		stringtype harp
 		G {G4 A4 B4 C5 D5 E5 F#5 G5 A5 B5 C6 D6 E6 F#6 G6}
+		comment {folk zither https://www.jamesjonesinstruments.com/}
 	    }
 	    20 {
+		frettype none
+		stringtype harp
 		G {B3 C4 D4 E4 F#4 G4 A4 B4 C5 D5 E5 F#5 G5 A5 B5 C6 D6 E6 F#6 G6}
 		D {B3 C#4 D4 E4 F4 G4 A4 B4 C#5 D5 E5 F5 G5 A5 B5 C#6 D6 E6 F6 G6}
 		C {B3 C4 D4 E4 F4 G4 A4 B4 C5 D5 E5 F5 G5 A5 B5 C6 D6 E6 F6 G6}
+		comment {folk zither https://www.jamesjonesinstruments.com/}
 	    }
 	    comment {
 		In the following the first five strings are fretted, and you can see the dulcimer there.
