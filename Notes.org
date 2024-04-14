@@ -352,18 +352,32 @@ Top-Loading Style Hardtail Bridge 24.706"
     The folk zithers are just like a harp.
     The concert and alpine
 *** implement sound controls.
+	These are the controls exposed by the Faust DSP's
 *** implement one note per fretted string
+	That is, highest note on string suppreses lower notes.
 *** implement scale coloring
     rather than, or in addition to, notating the note name
     find some nice circular, color blind palettes to color
     notes by scale position.
+    Use an 11 hue palette, one for each of the 11 chromatic
+    scale tones, but only color the notes in the current
+    scale, off-scale is still black.  This way the different
+    modes will be visibly distinguished.
+    Oh, you can move the tonic to the fundamental color when
+    you change scales or keys, or you can keep the tonic color
+    as it is and distinguish the new scale tonic by the fat 
+    collar around its fret button.
+    But that's confusing, each chromatic note is the tonic of 
+    a major scale, Ionian mode, and reading that scale out of
+    phase gives the other modes.  So we have 11 tonics and 7
+    modal scales, and all notes fulfil all roles in this
 *** implement touch control launch
     take one fret/course position and make it the control
     button, allow it to be dragged around, or repositioned
     to n, s, e, w, ne, se, nw, sw, sse, etc.
     Or just put them in the last row, add an extra fret for
     them.
-*** allow additiona touch controls on screen
+*** allow additional touch controls on screen
     nut transpositions, key changes, panic button, whammy,
     arbitrary midi events.  All draggable.
 *** place force sensitive resistors under the touch panel.
@@ -371,5 +385,9 @@ Top-Loading Style Hardtail Bridge 24.706"
     tube which passes a barometer, just blow or suck past the
     barometer.  Maybe don't need any airtight connection, just
     a leaky tube in the case with the baromenter.
+    looking at aquarium air tubes and fittings, have the barometers
+    from the epennywhistle days.
 *** add onboard audio hat with speakers, and headphone jack
+	of course, phones and tablets already have this
 *** add motion sensing.
+	phones and tablets already have this

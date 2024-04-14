@@ -81,6 +81,12 @@ namespace eval ::window {
 	    }
 	    mode {	# the mode determines which scale is labelled from the root
 	    }
+	    color-scales {
+	    }
+	    hide-offscales {
+	    }
+	    label-notes {
+	    }
 	    sound {
 		::sound::select $::window::data(sound)
 	    }
@@ -88,7 +94,7 @@ namespace eval ::window {
 		error "no case for $which in adjust"
 	    }
 	}
-	if {$redraw} { redraw $f }
+	if {$redraw} { redraw $w $f }
     }
 
     proc adjust-all {w f keyvals {redraw 1}} {
@@ -149,7 +155,7 @@ namespace eval ::window {
 	list $p $l
     }
     
-    proc redraw {f} {
+    proc redraw {w f} {
 	set inst [get-instrument]
 	set tonicnote [::midi::name-to-note $::window::data(tonic)]
 	set scalenotes [lmap n [::midi::get-mode $::window::data(mode)] {expr {($tonicnote+$n)%12}}]
@@ -158,40 +164,66 @@ namespace eval ::window {
 	$f delete all
 
 	# notes will become a list of lists of lists
-	# [lindex [lindex $notes $course] $fret] will return a list of notes to play
-	set notes {}
+	# [lindex [lindex $notes $course] $fret] will return a list of dictionaries
+	set notestable {}
+
+	set bangcourse [expr {$::window::data(courses)-1}]
+	set bangfret [expr {$::window::data(frets)-1}]
 
 	for {set course 0} {$course < $::window::data(courses)} {incr course} {
 	    set i1 [expr {$course*$::window::data(multiplicity)}]
 	    set i2 [expr {($course+1)*$::window::data(multiplicity)-1}]
 	    set stringnote [lmap n [lrange $::window::data(stringnotes) $i1 $i2] {expr {$n+$::window::data(nut)}}]
-	    set stringnotes {}
+	    set stringtable {}
 	    for {set fret 0} {$fret < $::window::data(frets)} {incr fret} {
-		set fretnote [lmap n $stringnote {expr {$n+$fret}}]
-		lappend stringnotes $fretnote
-		set fretnote [lindex $fretnote 0]
-		foreach {p l} [draw-button $f $course $fret [::midi::note-to-name $fretnote $::window::data(tonic)]] break
-
-		if {[lsearch -exact -integer $scalenotes [expr {$fretnote % 12}]] >= 0} {
-		    if {$tonicnote == ($fretnote % 12)} {
-			# highlight the tonic
-			$f itemconfigure $p -width 5 -outline white
-		    } else {
-			# emphasize the scale
-			$f itemconfigure $p -width 2 -outline white
-		    }
-		} else {
-		    # deemphasize the accidentals
-		    $f itemconfigure $l -fill darkgrey
-		    $f itemconfigure $p -width 1 -outline grey20
+		set isbang [expr {$course == $bangcourse && $fret == $bangfret}]
+		set notedict [dict create type notes course $course fret $fret]
+		set fretnotes [lmap n $stringnote {expr {$n+$fret}}]
+		set fretnote [lindex $fretnotes 0]
+		set fretnotename {}
+		if {$::window::data(label-notes)} {
+		    set fretnotename [::midi::note-to-name $fretnote $::window::data(tonic)]
 		}
+		if {$isbang} {
+		    set fretnotename {*}
+		    dict set notedict type bang
+		    dict set notedict command [list ::window::controls $w $f]
+		    dict set notedict fretnotes {}
+		}
+		foreach {polygon label} [draw-button $f $course $fret $fretnotename] break
+		if {$isbang} {
+		    $f itemconfigure $polygon -width 5 -outline white
+		    $f itemconfigure $label -fill darkgrey -fill white
+		} else {
+		    set scaledegree [lsearch -exact -integer $scalenotes [expr {$fretnote % 12}]]
+		    if {$scaledegree >= 0} {
+			if {$tonicnote == ($fretnote % 12)} {
+			    # highlight the tonic
+			    $f itemconfigure $polygon -width 5 -outline white
+			} else {
+			    # emphasize the scale
+			    $f itemconfigure $polygon -width 2 -outline white
+			}
+			if {$::window::data(color-scale)} {
+			    # use scaledegree to select a color
+			}
+			dict set notedict fretnotes $fretnotes
+		    } else {
+			# deemphasize the accidentals
+			$f itemconfigure $label -fill darkgrey
+			$f itemconfigure $polygon -width 1 -outline grey20
+			if {$::window::data(hide-offscale)} { set fretnotes {} }
+			dict set notedict fretnotes $fretnotes
+		    }
+		}
+		lappend stringtable $notedict
 	    }
-	    lappend notes $stringnotes
+	    lappend notestable $stringtable
 	}
-	set ::window::geom(notes) $notes
+	set ::window::geom(notestable) $notestable
     }
-
-
+    
+    
     ##
     ## coordinate transformation
     ##
@@ -201,7 +233,7 @@ namespace eval ::window {
     proc touch-to-window {x y} {
 	return [list $y [expr {max(0,$::window::geom(chgt)-$x-1)}]]
     }	
-
+    
     # translate window coordinates, x and y increasing from upper right corner
     # into string and fret
     # well, not exactly.  Translate touch input coordinates, which didn't rotate
@@ -216,7 +248,7 @@ namespace eval ::window {
 	set ffrac [expr {$freal-$f}]
 	list $s $f $sfrac $ffrac
     }
-
+    
     # translate string and fret coordinates into window coordinates
     # in this case, they are window coordinates, and this should be
     # orientation independent
@@ -232,19 +264,27 @@ namespace eval ::window {
     proc note {action id x y} {
 	foreach {string fret stringfrac fretfrac} [touch-to-fret $x $y] break
 	# puts "note $action $id $x $y $string $fret"
-	set i 0
-	foreach note [lindex [lindex $::window::geom(notes) $string] $fret] {
-	    sound::note $action $id.[incr i] [midi::mtof $note]
+	set notedict [lindex $::window::geom(notestable) $string $fret]
+	switch [dict get $notedict type] {
+	    notes {
+		set i 0
+		foreach note [dict get $notedict fretnotes] {
+		    sound::note $action $id.[incr i] [midi::mtof $note]
+		}
+	    }
+	    bang {
+		{*}[dict get $notedict command]
+	    }
 	}
     }
-
+    
     ##
     ## control panel
     ##
     proc max-width {list} {
 	tcl::mathfunc::max {*}[lmap i $list {string length $i}]
     }
-
+    
     proc myscale {w f name from to} {
 	labelframe $w.$name -text [string totitle $name]
 	scale $w.$name.scale -orient horizontal -showvalue true \
@@ -259,7 +299,7 @@ namespace eval ::window {
 	$w.$name.options selection clear
 	::window::adjust $w $f $name
     }
-
+    
     proc myoptionmenu {w f name values} {
 	labelframe $w.$name -text [string totitle $name]
 	pack [ttk::combobox $w.$name.options -textvariable ::window::data($name) -values $values -state readonly -width [max-width $values]] -fill x -expand true
@@ -268,16 +308,16 @@ namespace eval ::window {
     }
     
     proc controls {w f} {
-
+	
 	if {[winfo exists $w]} {
 	    wm withdraw $w
 	    $w.tuning.options configure -values [get-tunings]
 	    wm deiconify $w
 	} else {
-
+	    
 	    # controls
 	    toplevel $w
-	
+	    
 	    # choices
 	    pack [myoptionmenu $w $f instrument [lsort [::instrument::get-instruments]]] -side top -fill x -expand true
 	    pack [myoptionmenu $w $f tuning [get-tunings]] -side top -fill x -expand true
@@ -286,6 +326,11 @@ namespace eval ::window {
 	    pack [myscale $w $f nut -24 24] -side top -fill x -expand true
 	    pack [myscale $w $f frets 1 36] -side top -fill x -expand true
 	    pack [myoptionmenu $w $f sound [lsort [::sound::list-sounds]]] -side top -fill x -expand true
+	    
+	    # checkbuttons
+	    foreach {name text} {color-scales {Color Scales} hide-offscales {Hide Offscale} label-notes {Label Notes}} {
+		pack [checkbutton $w.$name -text $text -variable ::window::data($name) -command [list ::window::adjust $w $f $name]] -side top -fill x -expand true
+	    }
 
 	    # control buttons
 	    pack [button $w.done -text Dismiss -command [list wm withdraw $w]] -side top -fill x -expand true
@@ -293,30 +338,30 @@ namespace eval ::window {
 	    pack [button $w.panic -text Panic -foreground red -command {sound::stop}] -side top -fill x -expand true
 	}
     }
-
+    
     proc main {args} {
-
+	
 	# set default values, first time
 	array set ::window::data [array get ::params::defaults]
-
+	
 	# set values passed as arguments
 	array set ::window::data  $args
 	
 	# expand instrument
 	array set ::window::data [expand-tuning]
-
+	
 	# canvas fretboard
 	pack [canvas .fretboard] -side top -fill both -expand true
 	.fretboard configure -width $::params::params(width) -height $::params::params(height) -bg black \
 	    -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0
 	
 	# bindings for window configure and control button
-	bind .fretboard <Configure> {::window::redraw .fretboard}
+	bind .fretboard <Configure> {::window::redraw .zither .fretboard}
 	bind .fretboard <Button-3> {::window::controls .zither .fretboard}
-
+	
 	# touch handler
 	touch::init .fretboard
-
+	
 	if {$::params::params(touch)} {
 	    bind .fretboard <<TouchBegin>> {::window::note + %d %x %y}
 	    bind .fretboard <<TouchUpdate>> {::window::note . %d %x %y}
@@ -327,7 +372,7 @@ namespace eval ::window {
 	    bind .fretboard <B1-Motion> {::window::note . f %x %y}
 	    bind .fretboard <ButtonRelease-1> {::window::note - f %x %y}
 	}
-
+	
 	if {$::params::params(fullscreen)} {
 	    after 1 {
 		wm attributes . -fullscreen $::params::params(fullscreen)

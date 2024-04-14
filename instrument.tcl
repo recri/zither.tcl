@@ -80,7 +80,8 @@ namespace eval ::instrument {
 	}
 	bass-guitar {
 	    4 {
-		standard {E1 A1 D2 G2}
+		 standard {E1 A1 D2 G2}
+		 fourths {E1 A1 D2 G2}
 	    }
 	    5 {
 		low {B0 E1 A1 D2 G2}
@@ -89,6 +90,7 @@ namespace eval ::instrument {
 	    6 {
 		low {B0 E1 A1 D2 G2 C3}
 		high {E1 A1 D2 G2 C3 F3}
+		reversed {B3 E3 A2 D2 G1 C1}
 	    }
 	    8 {
 		stringtype paired
@@ -132,6 +134,7 @@ namespace eval ::instrument {
 	guitar {
 	    6 {
 		standard {E2 A2 D3 G3 B3 E4}
+		fourths  {B1 E2 A2 D3 G3 C4}
 		drop-D {D2 A2 D3 G3 B3 E4}
 		double-drop-D {D2 A2 D3 G3 B3 D4}
 		lowered-Eb {Eb2 Ab2 Db3 Gb3 Bb3 Eb4}
@@ -259,6 +262,10 @@ namespace eval ::instrument {
 	    get-up-in-the-cool {E3 E3 E4 E4 A4 A4 E5 E5}
 	}
 	stick {
+	    6 {
+		bass   {B3 E3 A2 D2 G1 C1}
+		guitar {B1 E2 A2 D3 G3 C4}
+	    }
 	    8 {
 		b4      {B0  E1  A1  D2  G2  C3 F3 Bb3}
 		gi      {B0  E1  A1  D2  G2  C3 E3 A3}
