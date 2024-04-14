@@ -51,9 +51,10 @@ namespace eval ::params {
 	nut 0
 	frets 24
 	sound bass
-	color-scale 0
-	hide-offscale 0
+	color-scales 0
+	hide-offscales 0
 	label-notes 1
+	scale-colors {#003f5c #374c80 #7a5195 #bc5090 #ef5675 #ff764a #ffa600}
     }
 
     switch $::tcl_platform(machine) {

@@ -83,6 +83,8 @@ namespace eval ::window {
 	    }
 	    color-scales {
 	    }
+	    scale-colors {
+	    }
 	    hide-offscales {
 	    }
 	    label-notes {
@@ -204,15 +206,19 @@ namespace eval ::window {
 			    # emphasize the scale
 			    $f itemconfigure $polygon -width 2 -outline white
 			}
-			if {$::window::data(color-scale)} {
+			if {$::window::data(color-scales)} {
 			    # use scaledegree to select a color
+			    $f itemconfigure $polygon -fill [lindex $::window::data(scale-colors) $scaledegree]
 			}
 			dict set notedict fretnotes $fretnotes
 		    } else {
 			# deemphasize the accidentals
 			$f itemconfigure $label -fill darkgrey
 			$f itemconfigure $polygon -width 1 -outline grey20
-			if {$::window::data(hide-offscale)} { set fretnotes {} }
+			if {$::window::data(hide-offscales)} { 
+			    $f itemconfigure $label -text {}
+			    set fretnotes {}
+			}
 			dict set notedict fretnotes $fretnotes
 		    }
 		}
