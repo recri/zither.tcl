@@ -271,15 +271,17 @@ namespace eval ::window {
 	foreach {string fret stringfrac fretfrac} [touch-to-fret $x $y] break
 	# puts "note $action $id $x $y $string $fret"
 	set notedict [lindex $::window::geom(notestable) $string $fret]
-	switch [dict get $notedict type] {
-	    notes {
-		set i 0
-		foreach note [dict get $notedict fretnotes] {
-		    sound::note $action $id.[incr i] [midi::mtof $note]
+	if {[dict exists $notedict type]} {
+	    switch [dict get $notedict type] {
+		notes {
+		    set i 0
+		    foreach note [dict get $notedict fretnotes] {
+			sound::note $action $id.[incr i] [midi::mtof $note]
+		    }
 		}
-	    }
-	    bang {
-		{*}[dict get $notedict command]
+		bang {
+		    {*}[dict get $notedict command]
+		}
 	    }
 	}
     }
