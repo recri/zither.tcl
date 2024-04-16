@@ -134,7 +134,10 @@ namespace eval ::instrument {
 	guitar {
 	    6 {
 		standard {E2 A2 D3 G3 B3 E4}
-		fourths  {B1 E2 A2 D3 G3 C4}
+		minor-thirds {E2 G2 Bb2 Db3 E3 G3}
+		major-thirds {E2 G#2 C3 E3 G#3 C4}
+		fourths {E2 A2 D3 G3 C4 F4}
+		fifths {C2 G2 D3 A3 E4 B4}
 		drop-D {D2 A2 D3 G3 B3 E4}
 		double-drop-D {D2 A2 D3 G3 B3 D4}
 		lowered-Eb {Eb2 Ab2 Db3 Gb3 Bb3 Eb4}
