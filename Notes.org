@@ -391,3 +391,31 @@ Top-Loading Style Hardtail Bridge 24.706"
 	of course, phones and tablets already have this
 *** [ ] add motion sensing.
 	phones and tablets already have this
+** Thinking about the keys/notes/stringfrets that we draw and play on
+*** The interface is an array of buttons.
+**** The columns of the array represent strings.
+**** The rows of the array represent frets.
+**** Each button corresponds to tapping a string, or a course of strings,   
+	onto a fret, which makes sound determined by the tuning of the
+	string(s) and the position of the fret.
+**** There is logically one button for each chromatic tone on the parts  
+	of the strings that are represented on screen.
+**** All buttons start with a roundish shape.
+	That is, neither square nor circular.
+**** Buttons may have a text label. 
+	The default labels Follow the western tradition for naming the
+	notes of the chromatic scale.
+**** Buttons may have different background colors.
+*** There are a range of options associated with the key and mode.
+**** The key specifies the tonic note for all scales 
+***** The tonic note button is distinguished by a thick border.
+***** It also chooses between sharps and flats in button labels.
+**** The mode specifies the set of notes in the scale.
+***** The notes in the current scale are distinguished from the offscale notes.
+***** Notes not in the scale may be
+****** Deemphasized in rendering.
+****** Removed from text labelling.
+****** Removed from background coloring.
+****** Disabled from sound rendering.
+****** Absorbed by the next higher adjacent button.
+	
