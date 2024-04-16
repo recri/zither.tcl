@@ -1,0 +1,20 @@
+#!/usr/local/bin/wish
+
+lappend auto_path ~/Projects/Audio/keyer/lib
+
+package require cantk::oklab
+
+##
+## use oklab to select 11 colors to represent the notes of the chromatic scale
+## so colorings of the notes included in the scales of diffent modes in different
+## keys share a relative color pattern.
+##
+
+##
+## oklab or oklch, I have no way of choosing a color in oklab, but I can take
+## an srgb and map it in.  Toss in a ring of points and set them to maximise
+## their distance matrix, subject to remaining a color in srgb gamut.
+##
+
+##
+## 
