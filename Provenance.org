@@ -1,0 +1,2 @@
+* Cyclic color blind color palette from https://zenodo.org/records/4491293,
+        Fabio Crameri's Scientific Color Maps version 7.
