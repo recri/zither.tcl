@@ -16,5 +16,25 @@ package require cantk::oklab
 ## their distance matrix, subject to remaining a color in srgb gamut.
 ##
 
+set colors1 {
+    #003f5c #374c80 #7a5195 #bc5090 #ef5675 #ff764a #ffa600
+}
+set colors2 {
+    #00876c #4c9c85 #78b19f #a0c6b9 #c8dbd5 #f1f1f1 #f1cfce #eeadad #e88b8d #df676e #d43d51
+}
+
+set colors3 {
+    #A50021 #D82632 #F76D5E #FFAD72 #FFE099 #FFFFBF #E0FFFF #AAF7FF #72D8FF #3FA0FF #264CFF
+}
+    
 ##
-## 
+##
+##
+
+set n 0
+pack [labelframe .c1 -text Colors1] -side top -fill x -expand true
+foreach c $colors1 { pack [frame .c1.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+pack [labelframe .c2 -text Colors2] -side top -fill x -expand true
+foreach c $colors2 { pack [frame .c2.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+pack [labelframe .c3 -text Colors3] -side top -fill x -expand true
+foreach c $colors3 { pack [frame .c3.x[incr n] -height 64 -background $c] -side left -fill both -expand true }

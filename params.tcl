@@ -54,11 +54,14 @@ namespace eval ::params {
 	color-scales 0
 	hide-offscales 0
 	label-notes 1
-	scale-colors {
+	scale-colors-1 {
 	    {\#003f5c} {\#374c80} {\#7a5195} {\#bc5090} {\#ef5675} {\#ff764a} {\#ffa600}
 	}
-	scale-colors {
+	scale-colors-2 {
 	    {\#00876c} {\#4c9c85} {\#78b19f} {\#a0c6b9} {\#c8dbd5} {\#f1f1f1} {\#f1cfce} {\#eeadad} {\#e88b8d} {\#df676e} {\#d43d51}
+	}
+	scale-colors {
+	    #A50021 #D82632 #F76D5E #FFAD72 #FFE099 #FFFFBF #E0FFFF #AAF7FF #72D8FF #3FA0FF #264CFF
 	}
     }
 
