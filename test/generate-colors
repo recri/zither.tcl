@@ -4,25 +4,16 @@ lappend auto_path ~/Projects/Audio/keyer/lib
 
 package require cantk::oklab
 
-##
-## use oklab to select 11 colors to represent the notes of the chromatic scale
-## so colorings of the notes included in the scales of diffent modes in different
-## keys share a relative color pattern.
-##
-
-##
-## oklab or oklch, I have no way of choosing a color in oklab, but I can take
-## an srgb and map it in.  Toss in a ring of points and set them to maximise
-## their distance matrix, subject to remaining a color in srgb gamut.
-##
-
+# quest for color blind friendly color palettes for coloring notes on the fretboard.
+# too short
 set colors1 {
     #003f5c #374c80 #7a5195 #bc5090 #ef5675 #ff764a #ffa600
 }
+# too divergent
 set colors2 {
     #00876c #4c9c85 #78b19f #a0c6b9 #c8dbd5 #f1f1f1 #f1cfce #eeadad #e88b8d #df676e #d43d51
 }
-
+# still too short
 set colors3 {
     #A50021 #D82632 #F76D5E #FFAD72 #FFE099 #FFFFBF #E0FFFF #AAF7FF #72D8FF #3FA0FF #264CFF
 }
@@ -30,11 +21,61 @@ set colors3 {
 ##
 ##
 ##
+proc read-file {file} {
+    set fp [open $file r]
+    set data [split [string trim [read $fp]] \n]
+    close $fp
+    return $data
+}
+
+proc get-colors {name} {
+    set colors {}
+    foreach line [read-file $name] {
+	lappend colors [format \#%04x%04x%04x {*}[lmap x $line {expr {int($x*0xffff)}}]]
+    }
+    return $colors
+}
+proc get-palette {colors {n 12} {off 0}} {
+    if {[llength $colors] == 1} {
+	set colors [get-colors $colors]
+    }
+    set palette {}
+    set colors [concat [lrange $colors $off end] [lrange  $colors 0 [incr off -1]]]
+    set ncolors [llength $colors]
+    for {set i 0} {$i < $n} {incr i} {
+	lappend palette [lindex $colors [expr {int(0+double($i)*$ncolors/$n) % $ncolors}]]
+    }
+    return $palette
+}
 
 set n 0
 pack [labelframe .c1 -text Colors1] -side top -fill x -expand true
 foreach c $colors1 { pack [frame .c1.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+set n 0
 pack [labelframe .c2 -text Colors2] -side top -fill x -expand true
 foreach c $colors2 { pack [frame .c2.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+set n 0
 pack [labelframe .c3 -text Colors3] -side top -fill x -expand true
 foreach c $colors3 { pack [frame .c3.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+
+foreach file [lsort [glob *O.txt]] {
+    set pal [get-palette $file 12]
+    set tag [file rootname $file]
+    set w .c$tag
+    set n 0
+    pack [labelframe $w -text $tag] -side top -fill x -expand true
+    foreach c $pal { pack [frame $w.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+}
+
+destroy $c {*}[winfo children .]
+
+set colors [get-colors romaO.txt]
+for {set i 0} {$i < 22} {incr i} {
+    set tag "romaO $i"
+    set w .c$i
+    set n 0
+    set pal [get-palette $colors 12 $i]
+    pack [labelframe $w -text $tag] -side top -fill x -expand true
+    foreach c $pal { pack [frame $w.x[incr n] -height 8 -background $c] -side left -fill both -expand true }
+}
+ 
