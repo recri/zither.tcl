@@ -198,6 +198,8 @@ namespace eval ::window {
 		    $f itemconfigure $label -fill darkgrey -fill white
 		} else {
 		    set scaledegree [lsearch -exact -integer $scalenotes [expr {$fretnote % 12}]]
+		    set chromaticdegree [expr {($fretnote-$tonicnote+12)%12}]
+		    puts "chromatic degree $chromaticdegree of $fretnotename in key of $::window::data(tonic)"
 		    if {$scaledegree >= 0} {
 			if {$tonicnote == ($fretnote % 12)} {
 			    # highlight the tonic
@@ -208,7 +210,9 @@ namespace eval ::window {
 			}
 			if {$::window::data(color-scales)} {
 			    # use scaledegree to select a color
-			    $f itemconfigure $polygon -fill [lindex $::window::data(scale-colors) $scaledegree]
+			    # $f itemconfigure $polygon -fill [lindex $::window::data(scale-colors) $scaledegree]
+			    # use chromatic degree to select a color
+			    $f itemconfigure $polygon -fill [lindex $::window::data(scale-colors) $chromaticdegree]
 			}
 			dict set notedict fretnotes $fretnotes
 		    } else {

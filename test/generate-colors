@@ -3,7 +3,7 @@
 lappend auto_path ~/Projects/Audio/keyer/lib
 
 package require cantk::oklab
-
+package
 ##
 ## use oklab to select 11 colors to represent the notes of the chromatic scale
 ## so colorings of the notes included in the scales of diffent modes in different

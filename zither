@@ -24,6 +24,17 @@ lappend auto_path . ../keyer/lib
 package require params
 package require window
 
+proc find-touch-input {} {
+    set dev {}
+    foreach line [split [string trim [exec lsinput]] \n] {
+	switch -glob $line {
+	    /dev/input/event* { set dev $line }
+	    *name*:*ft5x06* { return $dev }
+	}
+    }
+    return $dev
+}
+
 proc main {argc argv} {
     set opts {}
     foreach {key value} $argv {
@@ -41,5 +52,6 @@ proc main {argc argv} {
 
 }
 
+set ::params::params(dev) [find-touch-input]
 main $argc $argv
 
