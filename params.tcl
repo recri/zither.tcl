@@ -54,14 +54,26 @@ namespace eval ::params {
 	color-scales 0
 	hide-offscales 0
 	label-notes 1
-	scale-colors-1 {
-	    {\#003f5c} {\#374c80} {\#7a5195} {\#bc5090} {\#ef5675} {\#ff764a} {\#ffa600}
-	}
-	scale-colors-2 {
-	    {\#00876c} {\#4c9c85} {\#78b19f} {\#a0c6b9} {\#c8dbd5} {\#f1f1f1} {\#f1cfce} {\#eeadad} {\#e88b8d} {\#df676e} {\#d43d51}
+	more-scale-colors {
+	    bamO {
+		#4f382fb44383 #79013fa66be5 #a0dc5eb09121 #c29a8584b280 #d835b0dcca1a #d945c8c8ca61 #cf21cdd8bbe1 #abbeb8fd8f75 #83c0916e6540 #67ca6e3e4d7c #53d350723faa #49df3ca63a70
+	    }
+
+	    brocO {
+		#36db2f4637dc #369e393b5715 #415457b280ce #611b7f4aa52c #8adca401bf7c #b585c494d012 #cfbfd446c560 #c2ffc3169bb4 #9f0f9e936c66 #758c74ac450c #53f551262df9 #3f0f38a82985
+	    }
+	    corkO {
+		#3f1b3e563aac #3dc83f3f51ed #447555117865 #5f0b7aae9fd9 #844b9e81ba9b #a68fbd60c8b5 #af51cb4fbca1 #96cabee799c6 #7356a3346ef6 #547a7d5b43ec #465d5d622e3d #41c749772e62
+	    }
+	    romaO {
+		#738c39345784 #828c3bde3d3d #941e4fd62dd1 #aaf475552f24 #c3bba3ca4bc7 #d5afcf268107 #cbc2e219b382 #a4fbd8f3cc0b #7494bbd3ce31 #535993a2bff6 #515a6b95a512 #622349a97dad
+	    }
+	    vikO {
+		#4f4e19d43d09 #3fbd2bcf5b37 #33874b767f2f #455c756fa16f #75939ec0bc86 #ae95bdd1c8e8 #d577bf0ab3a9 #d7eea386871e #c5b27bfe5669 #a1834b7c2bdf #7ab7256b1e52 #610315fe2797
+	    }
 	}
 	scale-colors {
-	    #A50021 #D82632 #F76D5E #FFAD72 #FFE099 #FFFFBF #E0FFFF #AAF7FF #72D8FF #3FA0FF #264CFF
+	    #4f4e19d43d09 #3fbd2bcf5b37 #33874b767f2f #455c756fa16f #75939ec0bc86 #ae95bdd1c8e8 #d577bf0ab3a9 #d7eea386871e #c5b27bfe5669 #a1834b7c2bdf #7ab7256b1e52 #610315fe2797
 	}
     }
 

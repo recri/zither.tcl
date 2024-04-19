@@ -48,34 +48,38 @@ proc get-palette {colors {n 12} {off 0}} {
     return $palette
 }
 
-set n 0
-pack [labelframe .c1 -text Colors1] -side top -fill x -expand true
-foreach c $colors1 { pack [frame .c1.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
-set n 0
-pack [labelframe .c2 -text Colors2] -side top -fill x -expand true
-foreach c $colors2 { pack [frame .c2.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
-set n 0
-pack [labelframe .c3 -text Colors3] -side top -fill x -expand true
-foreach c $colors3 { pack [frame .c3.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
-
-foreach file [lsort [glob *O.txt]] {
-    set pal [get-palette $file 12]
-    set tag [file rootname $file]
-    set w .c$tag
+proc first {} {
     set n 0
-    pack [labelframe $w -text $tag] -side top -fill x -expand true
-    foreach c $pal { pack [frame $w.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+    pack [labelframe .c1 -text Colors1] -side top -fill x -expand true
+    foreach c $::colors1 { pack [frame .c1.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+    set n 0
+    pack [labelframe .c2 -text Colors2] -side top -fill x -expand true
+    foreach c $::colors2 { pack [frame .c2.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+    set n 0
+    pack [labelframe .c3 -text Colors3] -side top -fill x -expand true
+    foreach c $::colors3 { pack [frame .c3.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+
+    foreach file [lsort [glob *O.txt]] {
+	set pal [get-palette $file 12]
+	set tag [file rootname $file]
+	set w .c$tag
+	set n 0
+	pack [labelframe $w -text $tag] -side top -fill x -expand true
+	foreach c $pal { pack [frame $w.x[incr n] -height 64 -background $c] -side left -fill both -expand true }
+	puts "$tag {$pal}"
+    }
 }
 
-destroy $c {*}[winfo children .]
-
-set colors [get-colors romaO.txt]
-for {set i 0} {$i < 22} {incr i} {
-    set tag "romaO $i"
-    set w .c$i
-    set n 0
-    set pal [get-palette $colors 12 $i]
-    pack [labelframe $w -text $tag] -side top -fill x -expand true
-    foreach c $pal { pack [frame $w.x[incr n] -height 8 -background $c] -side left -fill both -expand true }
+proc second {} {
+    set colors [get-colors romaO.txt]
+    for {set i 0} {$i < 22} {incr i} {
+	set tag "romaO $i"
+	set w .c$i
+	set n 0
+	set pal [get-palette $colors 12 $i]
+	pack [labelframe $w -text $tag] -side top -fill x -expand true
+	foreach c $pal { pack [frame $w.x[incr n] -height 8 -background $c] -side left -fill both -expand true }
+    }
 }
- 
+
+first

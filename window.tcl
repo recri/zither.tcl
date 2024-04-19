@@ -351,7 +351,7 @@ namespace eval ::window {
 	
 	# set default values, first time
 	array set ::window::data [array get ::params::defaults]
-	
+	set ::window::data(s
 	# set values passed as arguments
 	array set ::window::data  $args
 	
