@@ -438,4 +438,23 @@ Top-Loading Style Hardtail Bridge 24.706"
 **** Ah, instrument and see how frequently each number of touches occurs,
      and maybe find out that the 5-points may do more than 5 points of
      touch.
-     
+** Overhaul the settings dialog
+*** Setings presents a hierarchical editor
+**** Root page shows the current preset
+     and allows it to be edited.
+**** Should probably cover the entire window 
+***** though it is fun to watch things update with parameters.
+***** There is a combobox for selecting the active preset
+	from a library of presets
+***** There is a summary of the settings for the active preset
+***** There is a button to return to the fretboard
+***** There is a button to delete the active preset
+***** There is a button to copy the active preset
+***** There is a button to rename the active preset
+***** (There is a button to exit the program)
+***** There is a panic button to turn off all sounds
+**** Second tab edits the instrument selection for the selected preset
+**** Third tab edits the sound module selection for the selected preset
+**** Fourth tab edits the fretboard decorations for the selected preset
+**** Second tab is the preset editor
+

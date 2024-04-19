@@ -244,8 +244,8 @@ namespace eval ::window {
     # into string and fret
     # well, not exactly.  Translate touch input coordinates, which didn't rotate
     # with the screen when we put the touchscreen into portrait mode.
-    proc touch-to-fret {x y} {
-	foreach {x y} [::window::touch-to-window $x $y] break
+    proc touch-to-fret {x y mouse} {
+	if { ! $mouse } { foreach {x y} [::window::touch-to-window $x $y] break }
 	set sreal [expr {$x/$::window::geom(sper)}]
 	set freal [expr {$y/$::window::geom(fper)}]
 	set s [expr {max(0,min($::window::data(strings), int($sreal)))}]
@@ -268,8 +268,8 @@ namespace eval ::window {
     ## play the note
     ##
     proc note {action id x y} {
-	foreach {string fret stringfrac fretfrac} [touch-to-fret $x $y] break
-	# puts "note $action $id $x $y $string $fret"
+	foreach {string fret stringfrac fretfrac} [touch-to-fret $x $y $::params::params(mouse)] break
+	## puts [format "note $action $id $x $y -> %d %d %.2f %.2f" $string $fret $stringfrac $fretfrac]
 	set notedict [lindex $::window::geom(notestable) $string $fret]
 	if {[dict exists $notedict type]} {
 	    switch [dict get $notedict type] {
@@ -351,7 +351,6 @@ namespace eval ::window {
 	
 	# set default values, first time
 	array set ::window::data [array get ::params::defaults]
-	set ::window::data(s
 	# set values passed as arguments
 	array set ::window::data  $args
 	

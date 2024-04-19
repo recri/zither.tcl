@@ -669,32 +669,32 @@ namespace eval ::evdev {
 	    KEY_MAX 0x2ff
 	}
 	EV_REL 0x02 {
-	    REL_X			0x00
-	    REL_Y			0x01
-	    REL_Z			0x02
-	    REL_RX			0x03
-	    REL_RY			0x04
-	    REL_RZ			0x05
+	    REL_X		0x00
+	    REL_Y		0x01
+	    REL_Z		0x02
+	    REL_RX		0x03
+	    REL_RY		0x04
+	    REL_RZ		0x05
 	    REL_HWHEEL		0x06
 	    REL_DIAL		0x07
 	    REL_WHEEL		0x08
 	    REL_MISC		0x09
-	    REL_RESERVED		0x0a
+	    REL_RESERVED	0x0a
 	    REL_WHEEL_HI_RES	0x0b
 	    REL_HWHEEL_HI_RES	0x0c
-	    REL_MAX			0x0f
+	    REL_MAX		0x0f
 	}
 	EV_ABS 0x03 {
-	    ABS_X			0x00
-	    ABS_Y			0x01
-	    ABS_Z			0x02
-	    ABS_RX			0x03
-	    ABS_RY			0x04
-	    ABS_RZ			0x05
-	    ABS_THROTTLE		0x06
+	    ABS_X		0x00
+	    ABS_Y		0x01
+	    ABS_Z		0x02
+	    ABS_RX		0x03
+	    ABS_RY		0x04
+	    ABS_RZ		0x05
+	    ABS_THROTTLE	0x06
 	    ABS_RUDDER		0x07
 	    ABS_WHEEL		0x08
-	    ABS_GAS			0x09
+	    ABS_GAS		0x09
 	    ABS_BRAKE		0x0a
 	    ABS_HAT0X		0x10
 	    ABS_HAT0Y		0x11
@@ -704,15 +704,15 @@ namespace eval ::evdev {
 	    ABS_HAT2Y		0x15
 	    ABS_HAT3X		0x16
 	    ABS_HAT3Y		0x17
-	    ABS_PRESSURE		0x18
-	    ABS_DISTANCE		0x19
+	    ABS_PRESSURE	0x18
+	    ABS_DISTANCE	0x19
 	    ABS_TILT_X		0x1a
 	    ABS_TILT_Y		0x1b
-	    ABS_TOOL_WIDTH		0x1c
+	    ABS_TOOL_WIDTH	0x1c
 	    ABS_VOLUME		0x20
 	    ABS_PROFILE		0x21
 	    ABS_MISC		0x28
-	    ABS_RESERVED		0x2e
+	    ABS_RESERVED	0x2e
 	    ABS_MT_SLOT		0x2f
 	    ABS_MT_TOUCH_MAJOR	0x30
 	    ABS_MT_TOUCH_MINOR	0x31
@@ -722,42 +722,42 @@ namespace eval ::evdev {
 	    ABS_MT_POSITION_X	0x35
 	    ABS_MT_POSITION_Y	0x36
 	    ABS_MT_TOOL_TYPE	0x37
-	    ABS_MT_BLOB_ID		0x38
+	    ABS_MT_BLOB_ID	0x38
 	    ABS_MT_TRACKING_ID	0x39
-	    ABS_MT_PRESSURE		0x3a
-	    ABS_MT_DISTANCE		0x3b
-	    ABS_MT_TOOL_X		0x3c
-	    ABS_MT_TOOL_Y		0x3d
-	    ABS_MAX			0x3f
+	    ABS_MT_PRESSURE	0x3a
+	    ABS_MT_DISTANCE	0x3b
+	    ABS_MT_TOOL_X	0x3c
+	    ABS_MT_TOOL_Y	0x3d
+	    ABS_MAX		0x3f
 	}
 	EV_MSC 0x04 {
 	    MSC_SERIAL		0x00
-	    MSC_PULSELED		0x01
+	    MSC_PULSELED	0x01
 	    MSC_GESTURE		0x02
-	    MSC_RAW			0x03
+	    MSC_RAW		0x03
 	    MSC_SCAN		0x04
-	    MSC_TIMESTAMP		0x05
-	    MSC_MAX			0x07
+	    MSC_TIMESTAMP	0x05
+	    MSC_MAX		0x07
 	}
 	EV_SW  0x05 {
-	    SW_LID			0x00
-	    SW_TABLET_MODE		0x01
+	    SW_LID		0x00
+	    SW_TABLET_MODE	0x01
 	    SW_HEADPHONE_INSERT	0x02
-	    SW_RFKILL_ALL		0x03
-	    SW_MICROPHONE_INSERT	0x04
-	    SW_DOCK			0x05
+	    SW_RFKILL_ALL	0x03
+	    SW_MICROPHONE_INSERT 0x04
+	    SW_DOCK		0x05
 	    SW_LINEOUT_INSERT	0x06
 	    SW_JACK_PHYSICAL_INSERT 0x07
 	    SW_VIDEOOUT_INSERT	0x08
-	    SW_CAMERA_LENS_COVER	0x09
-	    SW_KEYPAD_SLIDE		0x0a
+	    SW_CAMERA_LENS_COVER 0x09
+	    SW_KEYPAD_SLIDE	0x0a
 	    SW_FRONT_PROXIMITY	0x0b
-	    SW_ROTATE_LOCK		0x0c
+	    SW_ROTATE_LOCK	0x0c
 	    SW_LINEIN_INSERT	0x0d
-	    SW_MUTE_DEVICE		0x0e
-	    SW_PEN_INSERTED		0x0f
+	    SW_MUTE_DEVICE	0x0e
+	    SW_PEN_INSERTED	0x0f
 	    SW_MACHINE_COVER	0x10
-	    SW_MAX			0x10
+	    SW_MAX		0x10
 	}
 	EV_LED 0x11 {
 	    LED_NUML		0x00
@@ -770,19 +770,19 @@ namespace eval ::evdev {
 	    LED_MUTE		0x07
 	    LED_MISC		0x08
 	    LED_MAIL		0x09
-	    LED_CHARGING		0x0a
-	    LED_MAX			0x0f
+	    LED_CHARGING	0x0a
+	    LED_MAX		0x0f
 	}
 	EV_SND 0x12 {
 	    SND_CLICK		0x00
 	    SND_BELL		0x01
 	    SND_TONE		0x02
-	    SND_MAX			0x07
+	    SND_MAX		0x07
 	}
 	EV_REP 0x14 {
 	    REP_DELAY		0x00
 	    REP_PERIOD		0x01
-	    REP_MAX			0x01
+	    REP_MAX		0x01
 	}
 	EV_FF  0x15 {
 	}
@@ -884,6 +884,8 @@ namespace eval ::evdev {
 
     foreach {type code translation} {
 	EV_SYN SYN_REPORT *
+	EV_REL REL_X {}
+	EV_REL REL_Y {}
 	EV_ABS ABS_PRESSURE {}
 	EV_ABS ABS_MT_SLOT t
 	EV_ABS ABS_MT_POSITION_X x
@@ -906,6 +908,8 @@ namespace eval ::evdev {
 	EV_KEY BTN_TOUCH {}
 	EV_KEY BTN_TOOL_DOUBLETAP {}
 	EV_KEY BTN_TOOL_TRIPLETAP {}
+	EV_KEY BTN_LEFT {}
+	EV_KEY BTN_RIGHT {}
     } {
 	set type [expr {0+[dict get $namevalues $type]}]
 	set code [expr {0+[dict get $namevalues $code]}]
