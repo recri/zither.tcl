@@ -56,7 +56,9 @@ namespace eval ::window {
 	switch $which {
 	    instrument {	# the base instrument
 		# puts [expand-tuning]
+		# expand tuning for the instrument
 		::window::adjust-all $w $f [expand-tuning] $redraw
+		# redraw the controls 
 		controls $w $f
 	    }
 	    courses {	# the number of string courses
@@ -81,13 +83,15 @@ namespace eval ::window {
 	    }
 	    mode {	# the mode determines which scale is labelled from the root
 	    }
-	    color-scales {
+	    decor-highlight {
 	    }
-	    scale-colors {
+	    decor-color {
 	    }
-	    hide-offscales {
+	    decor-palette {
 	    }
-	    label-notes {
+	    decor-unmute {
+	    }
+	    decor-label {
 	    }
 	    sound {
 		::sound::select $::window::data(sound)
@@ -111,10 +115,16 @@ namespace eval ::window {
     
     proc make-button {f} {
 	# first the geometry of frets and strings
-	set ::window::geom(cwid) [winfo width $f]
-	set ::window::geom(chgt) [winfo height $f]
-	set ::window::geom(fper) [expr {$::window::geom(chgt)/double($::window::data(frets))}]
-	set ::window::geom(sper) [expr {$::window::geom(cwid)/double($::window::data(courses))}]
+	set ::window::geom(cwid) [set w [winfo width $f]]
+	set ::window::geom(chgt) [set h [winfo height $f]]
+	if {$w >= $h} {
+	    set ::window::geom(orient) [set o {l}]
+	} else {
+	    set ::window::geom(orient) [set o {p}]
+	}
+	# ignoring the orientation, at least for now
+	set ::window::geom(fper) [expr {$h/double($::window::data(frets))}]
+	set ::window::geom(sper) [expr {$w/double($::window::data(courses))}]
 	set ::window::geom(xper) $::window::geom(sper)
 	set ::window::geom(yper) $::window::geom(fper)
 
@@ -130,9 +140,16 @@ namespace eval ::window {
 	# now build the button coordinates
 	set ::window::geom(button) [list $x0 $y0 $x0 $ym $x0 $yc $xm $yc $xc $yc $xc $ym $xc $y0 $xm $y0]
 
-	# now the font for the button label
+	# button text coordinates
+	set ::window::geom(button-text) [list $xm [expr {1.1*$ym}]]
+	
+	# now the font for the button label, if necessary
 	if {{MyButtonFont} ni [font names]} {
 	    font create MyButtonFont {*}[font configure TkHeadingFont] -size 16
+	}
+	set fontsize [expr {int($::window::geom(yper)/3)}]
+	if {[font configure MyButtonFont -size] != $fontsize} {
+	    font configure MyButtonFont -size $fontsize
 	}
     }
 
@@ -145,28 +162,60 @@ namespace eval ::window {
 	set yc [expr {$y+$::window::geom(yper)}]
 
 	# draw the button
-	set p [$f create polygon $::window::geom(button) -outline white -fill {} -smooth true]
-
-	# move it into position
-	$f move $p $x $y
+	set p [$f create polygon $::window::geom(button) -outline darkgray -fill {} -smooth true -tag $course.$fret]
 
 	# label button
-	set l [$f create text [expr {$x+0.5*$::window::geom(xper)}] [expr {$y+0.5*$::window::geom(yper)}] -text $text -anchor c -fill white -font MyButtonFont]
+	set l [$f create text {*}$::window::geom(button-text) -text $text -anchor c -fill darkgray -font MyButtonFont -tag $course.$fret]
 	
-	# return item identifier
+	# move them into position
+	$f move $course.$fret $x $y
+
+	# return item identifiers
 	list $p $l
     }
     
+    proc prepare {w f} {
+	set ::window::cache [dict create]
+	# iterate over chromatic degree in key to generate values
+	# some of the values should be configurable in three values for tonic, scale, offs-scale
+	set palette [::params::get-palette $::window::data(decor-palette)]
+	set tonic [::midi::get-key $::window::data(tonic)]
+	for {set cdink 0} {$cdink < 12} {incr cdink} {
+	    set cdict [dict create]
+	    # compute plain chromatic degree
+	    dict set cdict cd [set cd [expr {($cdink+$tonic)%12}]]
+	    # is-shown precomputed
+	    dict set cdict is-all 1
+	    dict set cdict is-none 0
+	    dict set cdict is-tonic [set is-tonic [expr {$cdink == 0}]]
+	    set modenotes [::midi::get-mode $::window::data(mode)]
+	    dict set cdict is-scale [set is-scale [expr {[lsearch $modenotes $cdink] >= 0}]]
+	    # compute label text
+	    dict set cdict text [::midi::note-to-name $cd $::window::data(tonic)]
+	    dict set cdict text-color  [expr {${is-tonic} ? {white} : ${is-scale} ? {lightgray} : {darkgray}}]
+	    # compute button fill color
+	    dict set cdict fill-color [lindex $palette $cdink]
+	    # compute highlight
+	    dict set cdict stroke-width [expr {${is-tonic} ? 3 : ${is-scale} ? 2 : 1}]
+	    dict set cdict stroke-color [expr {${is-tonic} ? {white} : ${is-scale} ? {lightgray} : {darkgray}}]
+	    # compute unmute
+	    dict set cdict unmute 1
+	    # save dictionary
+	    dict set ::window::cache $cdink $cdict
+	}
+    }
+
+    proc is-shown {cdink value} { dict get $::window::cache $cdink is-$value }
+
     proc redraw {w f} {
-	set inst [get-instrument]
-	set tonicnote [::midi::name-to-note $::window::data(tonic)]
-	set scalenotes [lmap n [::midi::get-mode $::window::data(mode)] {expr {($tonicnote+$n)%12}}]
+	# set inst [get-instrument]
+	prepare $w $f
 	make-button $f
 	
 	$f delete all
 
-	# notes will become a list of lists of lists
-	# [lindex [lindex $notes $course] $fret] will return a list of dictionaries
+	# notestable will become a list of lists of lists
+	# [lindex [lindex $notestable $course] $fret] will return a dictionaries
 	set notestable {}
 
 	set bangcourse [expr {$::window::data(courses)-1}]
@@ -178,49 +227,42 @@ namespace eval ::window {
 	    set stringnote [lmap n [lrange $::window::data(stringnotes) $i1 $i2] {expr {$n+$::window::data(nut)}}]
 	    set stringtable {}
 	    for {set fret 0} {$fret < $::window::data(frets)} {incr fret} {
+		# is this a posiion stolen for control shift
 		set isbang [expr {$course == $bangcourse && $fret == $bangfret}]
+		# initialize the notedict
 		set notedict [dict create type notes course $course fret $fret]
 		set fretnotes [lmap n $stringnote {expr {$n+$fret}}]
 		set fretnote [lindex $fretnotes 0]
-		set fretnotename {}
-		if {$::window::data(label-notes)} {
-		    set fretnotename [::midi::note-to-name $fretnote $::window::data(tonic)]
+		# chromatic degree
+		set cd [expr {$fretnote%12}]
+		# chromatic degree in key
+		set cdink [expr {($cd-[::midi::get-key $::window::data(tonic)]+12)%12}]
+		# draw minimum fret decoration
+		foreach {polygon label} [draw-button $f $course $fret {}] break
+		# draw conditional parts
+		set cdict [dict get $::window::cache $cdink]
+		dict with cdict {
+		    if {[is-shown $cdink $::window::data(decor-label)]} {
+			$f itemconfigure $label -text $text
+		    }
+		    if {[is-shown $cdink $::window::data(decor-highlight)]} {
+			$f itemconfigure $polygon -width ${stroke-width} -outline ${stroke-color}
+			$f itemconfigure $label -fill ${text-color}
+		    }
+		    if {[is-shown $cdink $::window::data(decor-color)]} {
+			$f itemconfigure $polygon -fill ${fill-color}
+		    }
+		    if {[is-shown $cdink $::window::data(decor-unmute)]} {
+			dict set notedict fretnotes $fretnotes
+		    }
 		}
+		# set the control button
 		if {$isbang} {
-		    set fretnotename {*}
+		    $f itemconfigure $polygon -width 3 -outline white
+		    $f itemconfigure $label -text {Z} -fill white
 		    dict set notedict type bang
 		    dict set notedict command [list ::window::controls $w $f]
 		    dict set notedict fretnotes {}
-		}
-		foreach {polygon label} [draw-button $f $course $fret $fretnotename] break
-		if {$isbang} {
-		    $f itemconfigure $polygon -width 5 -outline white
-		    $f itemconfigure $label -fill darkgrey -fill white
-		} else {
-		    set scaledegree [lsearch -exact -integer $scalenotes [expr {$fretnote % 12}]]
-		    if {$scaledegree >= 0} {
-			if {$tonicnote == ($fretnote % 12)} {
-			    # highlight the tonic
-			    $f itemconfigure $polygon -width 5 -outline white
-			} else {
-			    # emphasize the scale
-			    $f itemconfigure $polygon -width 2 -outline white
-			}
-			if {$::window::data(color-scales)} {
-			    # use scaledegree to select a color
-			    $f itemconfigure $polygon -fill [lindex $::window::data(scale-colors) $scaledegree]
-			}
-			dict set notedict fretnotes $fretnotes
-		    } else {
-			# deemphasize the accidentals
-			$f itemconfigure $label -fill darkgrey
-			$f itemconfigure $polygon -width 1 -outline grey20
-			if {$::window::data(hide-offscales)} { 
-			    $f itemconfigure $label -text {}
-			    set fretnotes {}
-			}
-			dict set notedict fretnotes $fretnotes
-		    }
 		}
 		lappend stringtable $notedict
 	    }
@@ -228,7 +270,6 @@ namespace eval ::window {
 	}
 	set ::window::geom(notestable) $notestable
     }
-    
     
     ##
     ## coordinate transformation
@@ -268,7 +309,7 @@ namespace eval ::window {
     ## play the note
     ##
     proc note {action id x y} {
-	foreach {string fret stringfrac fretfrac} [touch-to-fret $x $y $::params::params(mouse)] break
+	foreach {string fret stringfrac fretfrac} [touch-to-fret $x $y [dict get $::params::params mouse]] break
 	## puts [format "note $action $id $x $y -> %d %d %.2f %.2f" $string $fret $stringfrac $fretfrac]
 	set notedict [lindex $::window::geom(notestable) $string $fret]
 	if {[dict exists $notedict type]} {
@@ -293,6 +334,7 @@ namespace eval ::window {
 	tcl::mathfunc::max {*}[lmap i $list {string length $i}]
     }
     
+    # scale as in slider for setting a numeric value
     proc myscale {w f name from to} {
 	labelframe $w.$name -text [string totitle $name]
 	scale $w.$name.scale -orient horizontal -showvalue true \
@@ -315,6 +357,24 @@ namespace eval ::window {
 	return $w.$name
     }
     
+    proc fontsize {how} {
+	if { ! [info exists ::window::geom(fontreset)]} {
+	    foreach name [font names] {
+		dict set ::window::geom(fontreset) $name [font configure $name -size]
+	    }
+	}
+	foreach name [font names] {
+	    set oldsize [font configure $name -size]
+	    switch $how {
+		smaller { set newsize [expr {$oldsize + ($oldsize>0 ? -1 : 1)}] }
+		larger { set newsize [expr {$oldsize + ($oldsize>0 ? 1 : -1)}] }
+		reset { set newsize [dict get $::window::geom(fontreset) $name] }
+		default { error "no handler for fontsize $how" }
+	    }
+	    font configure $name -size $newsize
+	}
+    }
+
     proc controls {w f} {
 	
 	if {[winfo exists $w]} {
@@ -329,28 +389,37 @@ namespace eval ::window {
 	    # choices
 	    pack [myoptionmenu $w $f instrument [lsort [::instrument::get-instruments]]] -side top -fill x -expand true
 	    pack [myoptionmenu $w $f tuning [get-tunings]] -side top -fill x -expand true
-	    pack [myoptionmenu $w $f tonic [::midi::get-keys]] -side top -fill x -expand true
-	    pack [myoptionmenu $w $f mode [::midi::get-modes]] -side top -fill x -expand true
-	    pack [myscale $w $f nut -24 24] -side top -fill x -expand true
 	    pack [myscale $w $f frets 1 36] -side top -fill x -expand true
+	    pack [myscale $w $f nut -24 24] -side top -fill x -expand true
 	    pack [myoptionmenu $w $f sound [lsort [::sound::list-sounds]]] -side top -fill x -expand true
 	    
-	    # checkbuttons
-	    foreach {name text} {color-scales {Color Scales} hide-offscales {Hide Offscale} label-notes {Label Notes}} {
-		pack [checkbutton $w.$name -text $text -variable ::window::data($name) -command [list ::window::adjust $w $f $name]] -side top -fill x -expand true
+	    pack [myoptionmenu $w $f tonic [::midi::get-keys]] -side top -fill x -expand true
+	    pack [myoptionmenu $w $f mode [::midi::get-modes]] -side top -fill x -expand true
+
+	    foreach {name text} {decor-highlight {Highlights} decor-color {Color} decor-label {Labels} decor-unmute {Unmute}} {
+		pack [labelframe $w.$name -text $text]
+		foreach value [::params::get-value-list $name] {
+		    pack [radiobutton $w.$name.$value -text $value -value $value -variable ::window::data($name)] -side left
+		    $w.$name.$value configure -command [list ::window::adjust $w $f $name]
+		}
 	    }
 
 	    # control buttons
-	    pack [button $w.done -text Dismiss -command [list wm withdraw $w]] -side top -fill x -expand true
-	    pack [button $w.quit -text Quit -command {destroy .}] -side top -fill x -expand true
-	    pack [button $w.panic -text Panic -foreground red -command {sound::stop}] -side top -fill x -expand true
+	    pack [labelframe $w.fontsize -text {Font Size}] -side top -fill x -expand true
+	    foreach name {smaller reset larger} {
+		pack [button $w.$name -text [string totitle $name] -command [list ::window::fontsize $name]] -side left -fill x -expand true -in $w.fontsize
+	    }
+	    pack [labelframe $w.bottom -text Actions] -side top -fill x -expand true
+	    pack [button $w.done -text Dismiss -command [list wm withdraw $w]] -side left -fill x -expand true -in $w.bottom
+	    pack [button $w.quit -text Quit -command {destroy .}] -side left -fill x -expand true -in $w.bottom
+	    pack [button $w.panic -text Panic -foreground red -command {sound::stop}] -side left -fill x -expand true -in $w.bottom
 	}
     }
     
     proc main {args} {
 	
 	# set default values, first time
-	array set ::window::data [array get ::params::defaults]
+	array set ::window::data $::params::defaults
 	# set values passed as arguments
 	array set ::window::data  $args
 	
@@ -359,7 +428,7 @@ namespace eval ::window {
 	
 	# canvas fretboard
 	pack [canvas .fretboard] -side top -fill both -expand true
-	.fretboard configure -width $::params::params(width) -height $::params::params(height) -bg black \
+	.fretboard configure -width [dict get $::params::params width] -height [dict get $::params::params height] -bg black \
 	    -bd 0 -highlightthickness 0 -insertborderwidth 0 -selectborderwidth 0
 	
 	# bindings for window configure and control button
@@ -369,20 +438,20 @@ namespace eval ::window {
 	# touch handler
 	touch::init .fretboard
 	
-	if {$::params::params(touch)} {
+	if {[dict get $::params::params touch]} {
 	    bind .fretboard <<TouchBegin>> {::window::note + %d %x %y}
 	    bind .fretboard <<TouchUpdate>> {::window::note . %d %x %y}
 	    bind .fretboard <<TouchEnd>> {::window::note - %d %x %y}
 	}
-	if {$::params::params(mouse)} {
+	if {[dict get $::params::params mouse]} {
 	    bind .fretboard <ButtonPress-1> {::window::note + f %x %y}
 	    bind .fretboard <B1-Motion> {::window::note . f %x %y}
 	    bind .fretboard <ButtonRelease-1> {::window::note - f %x %y}
 	}
 	
-	if {$::params::params(fullscreen)} {
+	if {[dict get $::params::params fullscreen]} {
 	    after 1 {
-		wm attributes . -fullscreen $::params::params(fullscreen)
+		wm attributes . -fullscreen [dict get $::params::params fullscreen]
 		# puts [winfo geometry .]
 	    }
 	}

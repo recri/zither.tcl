@@ -1,0 +1,47 @@
+#!/usr/bin/wish
+
+lappend auto_path ~/Projects/Audio/keyer/lib
+
+package require cantk::oklab
+
+array set raw {
+    blue {rgba(2,0,36,1) 0%, rgba(0,212,255,1) 100%}
+    fire {rgba(255,59,0,1) 0%, rgba(255,255,0,1) 100%}
+    gray {rgba(0,0,0,1) 0%, rgba(255,255,255,1) 100%}
+    red  {rgba(36,2,0,1) 0%, rgba(255,0,212,1) 100%}
+    green {rgba(2,36,0,1) 0%, rgba(0,255,212,1) 100%}
+}
+
+proc hexrgb_interpolate {nsteps hex1 hex2} {
+    foreach {r1 g1 b1} [hexrgb_to_srgb $hex1] break
+    foreach {r2 g2 b2} [hexrgb_to_srgb $hex2] break
+    for {set i 0} {$i <= $nsteps+1} {incr i} {
+	set p [expr {double($i)/($nsteps+1)}]
+	set r3 [expr {(1-$p) * $r1 + $p * $r2}]
+	set g3 [expr {(1-$p) * $g1 + $p * $g2}]
+	set b3 [expr {(1-$p) * $b1 + $p * $b2}]
+	lappend colors [srgb_to_hexrgb [list $r3 $g3 $b3]]
+    }
+    set colors
+
+}
+
+foreach name [array names raw] {
+    set colors($name) {}
+    foreach {rgba pct} [split $raw($name)] {
+	# puts "$name $rgba"
+	if {[regexp {^rgba\((\d+),(\d+),(\d+),1\)$} $rgba all r g b a]} {
+	    lappend colors($name) [format \#%02x%02x%02x $r $g $b]
+	} else {
+	    error "error parsing $name"
+	}
+    }
+    foreach {hexrgb1 hexrgb2} $colors($name) break
+    pack [labelframe .$name -text $name] -side top -fill both -expand true
+    foreach c [hexrgb_interpolate 18 $hexrgb1 $hexrgb2] {
+	pack [frame .$name.c[incr i] -background $c] -side left -fill both -expand true
+	lappend colors($name) $c
+    }
+    puts "$name $colors($name)"
+}
+	

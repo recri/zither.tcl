@@ -910,6 +910,7 @@ namespace eval ::evdev {
 	EV_KEY BTN_TOOL_TRIPLETAP {}
 	EV_KEY BTN_LEFT {}
 	EV_KEY BTN_RIGHT {}
+	EV_KEY BTN_MIDDLE {}
     } {
 	set type [expr {0+[dict get $namevalues $type]}]
 	set code [expr {0+[dict get $namevalues $code]}]

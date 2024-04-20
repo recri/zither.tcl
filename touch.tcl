@@ -63,7 +63,7 @@ namespace eval touch {
 }
 
 proc touch::init {w} {
-    if {$::params::params(dev) ne {}} {
-	::evdev::touch $::params::params(dev) [list ::touch::evdev-handler $w]
+    if {[dict get $::params::params dev] ne {}} {
+	::evdev::touch [dict get $::params::params dev] [list ::touch::evdev-handler $w]
     }
 }
