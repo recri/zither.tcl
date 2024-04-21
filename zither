@@ -52,6 +52,6 @@ proc main {argc argv} {
 
 }
 
-set ::params::params(dev) [find-touch-input]
+dict set ::params::params dev [find-touch-input]
 main $argc $argv
 

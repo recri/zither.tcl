@@ -264,40 +264,6 @@ namespace eval ::window {
 		    dict set notedict command [list ::window::controls $w $f]
 		    dict set notedict fretnotes {}
 		}
-		foreach {polygon label} [draw-button $f $course $fret $fretnotename] break
-		if {$isbang} {
-		    $f itemconfigure $polygon -width 5 -outline white
-		    $f itemconfigure $label -fill darkgrey -fill white
-		} else {
-		    set scaledegree [lsearch -exact -integer $scalenotes [expr {$fretnote % 12}]]
-		    set chromaticdegree [expr {($fretnote-$tonicnote+12)%12}]
-		    puts "chromatic degree $chromaticdegree of $fretnotename in key of $::window::data(tonic)"
-		    if {$scaledegree >= 0} {
-			if {$tonicnote == ($fretnote % 12)} {
-			    # highlight the tonic
-			    $f itemconfigure $polygon -width 5 -outline white
-			} else {
-			    # emphasize the scale
-			    $f itemconfigure $polygon -width 2 -outline white
-			}
-			if {$::window::data(color-scales)} {
-			    # use scaledegree to select a color
-			    # $f itemconfigure $polygon -fill [lindex $::window::data(scale-colors) $scaledegree]
-			    # use chromatic degree to select a color
-			    $f itemconfigure $polygon -fill [lindex $::window::data(scale-colors) $chromaticdegree]
-			}
-			dict set notedict fretnotes $fretnotes
-		    } else {
-			# deemphasize the accidentals
-			$f itemconfigure $label -fill darkgrey
-			$f itemconfigure $polygon -width 1 -outline grey20
-			if {$::window::data(hide-offscales)} { 
-			    $f itemconfigure $label -text {}
-			    set fretnotes {}
-			}
-			dict set notedict fretnotes $fretnotes
-		    }
-		}
 		lappend stringtable $notedict
 	    }
 	    lappend notestable $stringtable
