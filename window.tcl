@@ -141,7 +141,7 @@ namespace eval ::window {
 	set ::window::geom(button) [list $x0 $y0 $x0 $ym $x0 $yc $xm $yc $xc $yc $xc $ym $xc $y0 $xm $y0]
 
 	# button text coordinates
-	set ::window::geom(button-text) [list $xm [expr {1.1*$ym}]]
+	set ::window::geom(button-text) [list $xm $ym]
 	
 	# now the font for the button label, if necessary
 	if {{MyButtonFont} ni [font names]} {
@@ -396,20 +396,25 @@ namespace eval ::window {
 	    pack [myoptionmenu $w $f tonic [::midi::get-keys]] -side top -fill x -expand true
 	    pack [myoptionmenu $w $f mode [::midi::get-modes]] -side top -fill x -expand true
 
+	    # decor buttons
+
+	    pack [labelframe $w.decor -text Decor] -side top -fill both -expand true
 	    foreach {name text} {decor-highlight {Highlights} decor-color {Color} decor-label {Labels} decor-unmute {Unmute}} {
-		pack [labelframe $w.$name -text $text]
+		pack [labelframe $w.$name -text $text] -side top -fill both -expand true -in $w.decor
 		foreach value [::params::get-value-list $name] {
 		    pack [radiobutton $w.$name.$value -text $value -value $value -variable ::window::data($name)] -side left
 		    $w.$name.$value configure -command [list ::window::adjust $w $f $name]
 		}
 	    }
+	    pack [myoptionmenu $w $f decor-palette [::params::get-palettes]] -side top -fill x -expand true -in $w.decor
 
 	    # control buttons
-	    pack [labelframe $w.fontsize -text {Font Size}] -side top -fill x -expand true
+	    pack [labelframe $w.controls -text Controls] -side top -fill both -expand true
+	    pack [labelframe $w.fontsize -text {Font Size}] -side top -fill x -expand true -in $w.controls
 	    foreach name {smaller reset larger} {
 		pack [button $w.$name -text [string totitle $name] -command [list ::window::fontsize $name]] -side left -fill x -expand true -in $w.fontsize
 	    }
-	    pack [labelframe $w.bottom -text Actions] -side top -fill x -expand true
+	    pack [labelframe $w.bottom -text Actions] -side top -fill x -expand true -in $w.controls
 	    pack [button $w.done -text Dismiss -command [list wm withdraw $w]] -side left -fill x -expand true -in $w.bottom
 	    pack [button $w.quit -text Quit -command {destroy .}] -side left -fill x -expand true -in $w.bottom
 	    pack [button $w.panic -text Panic -foreground red -command {sound::stop}] -side left -fill x -expand true -in $w.bottom
