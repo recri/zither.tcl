@@ -1,0 +1,31 @@
+#!/usr/bin/wish
+
+lappend auto_path ..
+
+package require Tk
+package require params
+package require midi
+
+##
+## layout the color schemes for each mode
+##
+
+proc max-width {list} {
+    tcl::mathfunc::max {*}[lmap i $list {string length $i}]
+}
+set width [max-width [::midi::get-modes]]
+foreach mode [::midi::get-modes] {
+    pack [frame .f$mode] -side top -fill both -expand true
+    pack [label .f$mode.label -text $mode -width $width] -side left
+    set e 24
+    set i 0
+    foreach note [::midi::get-mode $mode] {
+	while {$i < $note} {
+	    pack [frame .f$mode.color$i -height $e -width $e -background black] -side left -fill both -expand true
+	    incr i
+	}
+	set color [lindex $::params::defaults(scale-colors) [expr {$note%12}]]
+	pack [frame .f$mode.color$i -height $e -width $e -background $color] -side left -fill both -expand true
+	incr i
+    }
+}
