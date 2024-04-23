@@ -15,7 +15,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 # 
-zither:: ; DISPLAY=:0 ./zither dev /dev/input/event5 instrument 'guitar 6' frets 14 tuning fourths sound guitar decor-palette romaO
+zither:: ; DISPLAY=:0 ./zither instrument 'guitar 6' frets 14 tuning fourths sound guitar decor-palette romaO
 
 qjackctl: ; DISPLAY=:0 qjackctl &
 
