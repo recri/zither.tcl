@@ -1,0 +1,9 @@
+* Google Voice Hat is the name of the driver installed for my wm8960 sound card.
+** https://github.com/google/aiyprojects-raspbian/blob/aiyprojects/docs/voice.m
+** https://github.com/raspberrypi/linux/blob/rpi-4.14.y/sound/soc/bcm/googlevoicehat-codec.c
+** https://github.com/raspberrypi/linux/blob/rpi-4.14.y/sound/soc/bcm/googlevoicehat-soundcard.c
+** https://github.com/raspberrypi/linux/blob/rpi-4.14.y/arch/arm/boot/dts/overlays/googlevoicehat-soundcard-overlay.dts
+* Waveshare made a clone with its own driver
+** https://github.com/waveshare/WM8960-Audio-HAT
+* Google put one into the android source tree
+** https://android.googlesource.com/kernel/msm/+/android-msm-mako-3.4-jb-mr1/sound/soc/codecs/wm8960.c
