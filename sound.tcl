@@ -69,6 +69,7 @@ set ::sound::sounds [dict create {*}{
     elecGuitar faust::pm::elecGuitar
     guitar faust::pm::guitar
     ks faust::pm::ks
+    eks faust::stk::NLFeks
     marimba faust::pm::marimba
     modularInterpInst faust::pm::modularInterpInst
     nylonGuitar faust::pm::nylonGuitar
