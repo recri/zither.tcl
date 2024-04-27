@@ -19,8 +19,14 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 # 
 
-lappend auto_path . ../keyer/lib
+#
+# use the script location to find the rest of the libraries
+#
+set script [expr { ! [catch {file readlink [info script]} link] ? $link : [info script]}]
+set dirname [file dirname $script]
+lappend auto_path $dirname [file join $dirname .. keyer lib]
 
+puts $auto_path
 package require params
 package require window
 

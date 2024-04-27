@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#
+# start jack, if necessary, on the raspberry pi 4 with the raspiaudio ULTRA++ sound card.
+#
+
+if jack_control status; then
+   # status will return exit status true if jack is already running
+   exit 0
+fi
+
+jack_control shell <<%
+ds alsa
+dps device hw:wm8960soundcard
+start
+%
+
