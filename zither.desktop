@@ -4,6 +4,6 @@ Name=Zither
 GenericName=Synthesizer
 Comment=Play tunes on the pi tablet.
 Icon=/home/rec/Projects/Audio/zither.tcl/zither.png
-Exec=/home/rec/Projects/Audio/zither.tcl/zither
+Exec=/home/rec/Projects/Audio/zither.tcl/zither instrument 'guitar 6' frets 14 tuning fourths sound guitar decor-palette romaO
 StartupNotify=false
 Categories=Utility;
