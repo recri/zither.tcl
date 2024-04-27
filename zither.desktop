@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Zither
+GenericName=Synthesizer
+Comment=Play tunes on the pi tablet.
+Icon=/home/rec/Projects/Audio/zither.tcl/zither.png
+Exec=/home/rec/Projects/Audio/zither.tcl/zither
+StartupNotify=false
+Categories=Utility;
